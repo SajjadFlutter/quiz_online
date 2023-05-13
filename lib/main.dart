@@ -8,6 +8,8 @@ import 'package:quiz_online/common/bloc/borrom_nav_cubit/change_index_cubit.dart
 import 'package:quiz_online/common/widgets/main_wrapper.dart';
 import 'package:quiz_online/config/my_theme.dart';
 import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
+import 'package:quiz_online/features/feature_profile/data/models/quiz_model.dart';
+import 'package:quiz_online/features/feature_profile/presentation/screens/settings_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/result_screen.dart';
 import 'package:quiz_online/locator.dart';
@@ -28,6 +30,8 @@ void main() async {
 
   // init hive
   await Hive.initFlutter();
+  Hive.registerAdapter(QuizModelAdapter());
+  await Hive.openBox<QuizModel>('quizBox');
 
   runApp(
     MultiBlocProvider(
@@ -44,10 +48,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MyApp.changeColor(
-      Theme.of(context).scaffoldBackgroundColor,
-      Brightness.dark,
-    );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: MyTheme.lightTheme,
@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (context) => HomeScreen(),
         QuizScreen.routeName: (context) => const QuizScreen(),
         ResultScreen.routeName: (context) => const ResultScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
       },
       home: MainWrapper(),
     );

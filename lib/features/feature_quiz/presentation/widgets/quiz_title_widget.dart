@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
 
 class QuizTitleWidget extends StatelessWidget {
@@ -15,16 +14,8 @@ class QuizTitleWidget extends StatelessWidget {
     return RichText(
       text: TextSpan(
         text: QuizScreen.quizTitle,
-        style: textTheme.titleMedium,
+        style: textTheme.titleLarge,
         children: <TextSpan>[
-          TextSpan(
-            text: ' ${HomeScreen.quizYear}',
-            style: TextStyle(
-              fontFamily: 'yekan',
-              color: Colors.grey.shade800,
-              fontSize: 15.0,
-            ),
-          ),
           TextSpan(text: ' (داخلی)', style: textTheme.bodyMedium),
         ],
       ),

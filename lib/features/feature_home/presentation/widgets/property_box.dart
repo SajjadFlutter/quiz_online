@@ -25,7 +25,7 @@ class PropertyBox extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: primaryColor.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: Row(
         children: [

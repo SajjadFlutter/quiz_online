@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:quiz_online/common/widgets/title_widget.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_type_cubit.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_year_cubit.dart';
@@ -32,112 +33,110 @@ class HomeScreen extends StatelessWidget {
     // var cardColor = Theme.of(context).cardColor;
     var textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30.0),
-                    child: Image.asset(
-                      'assets/images/profile.png',
-                      width: 46.0,
-                      height: 46.0,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 10.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'سلام سجاد',
-                            style: textTheme.titleMedium,
-                          ),
-                          const SizedBox(width: 6.0),
-                          Image.asset(
-                            'assets/images/hand_emoji.png',
-                            width: 17.0,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 1.0),
-                      Text(
-                        'روز خوبی داشته باشی',
-                        style: textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Text('پنجشنبه', style: textTheme.bodyMedium),
-                  const SizedBox(height: 3.0),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 6.0, horizontal: 10.0),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Text(
-                      '1402/02/22',
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontFamily: 'yekan',
-                        fontSize: 14.0,
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: Image.asset(
+                        'assets/images/profile.png',
+                        width: 45.0,
+                        height: 45.0,
+                        fit: BoxFit.cover,
                       ),
                     ),
+                    const SizedBox(width: 10.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'سلام سجاد',
+                              style: textTheme.titleMedium,
+                            ),
+                            const SizedBox(width: 6.0),
+                            Image.asset(
+                              'assets/images/hand_emoji.png',
+                              width: 17.0,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 1.0),
+                        Text(
+                          'روز خوبی داشته باشی',
+                          style: textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 15.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                ],
-              ),
-            ],
+                  child: Text(
+                    DateTime.now().toPersianDateStr(strMonth: true),
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontFamily: 'iransans',
+                      fontSize: 10.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
 
-        const SizedBox(height: 25.0),
+          const SizedBox(height: 15.0),
 
-        const TitleWidget(title: 'آزمون های در دسترس'),
+          const TitleWidget(title: 'آزمون های در دسترس'),
 
-        // categories
-        const SizedBox(height: 25.0),
-        CategoryBox(
-          height: height,
-          image: 'assets/images/riyazi.svg',
-          title: 'ریاضی',
-          onTap: () {
-            homeBottomSheet(
-                context, height, width, defualtIndex, categoryList[0]);
-          },
-        ),
-        const SizedBox(height: 15.0),
-        CategoryBox(
-          height: height,
-          image: 'assets/images/tajrobi.svg',
-          title: 'علوم تجربی',
-          onTap: () {
-            homeBottomSheet(
-                context, height, width, defualtIndex, categoryList[1]);
-          },
-        ),
-        const SizedBox(height: 15.0),
-        CategoryBox(
-          height: height,
-          image: 'assets/images/ensani.svg',
-          title: 'علوم انسانی',
-          onTap: () {
-            homeBottomSheet(
-                context, height, width, defualtIndex, categoryList[2]);
-          },
-        ),
-      ],
+          // categories
+          const SizedBox(height: 20.0),
+          CategoryBox(
+            height: height,
+            image: 'assets/images/riyazi.svg',
+            title: 'ریاضی',
+            onTap: () {
+              homeBottomSheet(
+                  context, height, width, defualtIndex, categoryList[0]);
+            },
+          ),
+          const SizedBox(height: 15.0),
+          CategoryBox(
+            height: height,
+            image: 'assets/images/tajrobi.svg',
+            title: 'علوم تجربی',
+            onTap: () {
+              homeBottomSheet(
+                  context, height, width, defualtIndex, categoryList[1]);
+            },
+          ),
+          const SizedBox(height: 15.0),
+          CategoryBox(
+            height: height,
+            image: 'assets/images/ensani.svg',
+            title: 'علوم انسانی',
+            onTap: () {
+              homeBottomSheet(
+                  context, height, width, defualtIndex, categoryList[2]);
+            },
+          ),
+          const SizedBox(height: 25.0),
+        ],
+      ),
     );
   }
 
@@ -182,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                       height: 5.0,
                       decoration: BoxDecoration(
                         color: Colors.grey,
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
                     ),
                     const SizedBox(height: 25.0),
@@ -265,12 +264,12 @@ class HomeScreen extends StatelessWidget {
                                   },
                                   child: Container(
                                     width: 90,
-                                    height: 105,
+                                    height: 110,
                                     decoration: BoxDecoration(
                                       color: index == state
                                           ? primaryColor
                                           : primaryColor.withOpacity(0.12),
-                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderRadius: BorderRadius.circular(18.0),
                                     ),
                                     child: Column(
                                       mainAxisAlignment:
@@ -282,18 +281,17 @@ class HomeScreen extends StatelessWidget {
                                             color: index == state
                                                 ? Colors.white
                                                 : primaryColor,
-                                            fontSize: 14.0,
+                                            fontSize: 12.0,
                                           ),
                                         ),
                                         const SizedBox(height: 20.0),
                                         Text(
-                                          '${konkurYears[index]}',
+                                          '${konkurYears[index]}'.toPersianDigit(),
                                           style: TextStyle(
                                             color: index == state
                                                 ? Colors.white
                                                 : primaryColor,
-                                            fontSize: 18.0,
-                                            fontFamily: 'yekan',
+                                            fontSize: 14.0,
                                           ),
                                         ),
                                       ],
@@ -323,17 +321,17 @@ class HomeScreen extends StatelessWidget {
                           backgroundColor: primaryColor,
                           elevation: 0.0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
                         ),
                         child: const Text(
                           'شروع کن',
                           style:
-                              TextStyle(fontSize: 14.0, fontFamily: 'iransans'),
+                              TextStyle(fontSize: 12.0, fontFamily: 'iransans'),
                         ),
                         onPressed: () {
                           QuizScreen.categoryTitle = categoryTitle;
-                          QuizScreen.quizTitle = 'کنکور $categoryTitle';
+                          QuizScreen.quizTitle = 'کنکور $categoryTitle ${quizYear.toString().toPersianDigit()}';
                           // ریاضی
                           if (categoryTitle == 'ریاضی') {
                             // lessons list

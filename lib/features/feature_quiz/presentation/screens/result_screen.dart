@@ -1,8 +1,13 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:quiz_online/common/widgets/main_wrapper.dart';
 import 'package:quiz_online/common/widgets/title_widget.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
+import 'package:quiz_online/features/feature_quiz/presentation/widgets/quiz_title_widget.dart';
 
 class ResultScreen extends StatelessWidget {
   static String routeName = '/result_screen';
@@ -23,7 +28,7 @@ class ResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'نتیجه آزمون',
-          style: textTheme.titleMedium,
+          style: textTheme.titleLarge,
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -31,6 +36,7 @@ class ResultScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: SizedBox(
           width: width,
           child: Column(
@@ -39,8 +45,8 @@ class ResultScreen extends StatelessWidget {
 
               // result animation
               Container(
-                width: 135.0,
-                height: 135.0,
+                width: 130.0,
+                height: 130.0,
                 padding: const EdgeInsets.all(5.0),
                 child: Lottie.asset(
                   'assets/images/result_animation.json',
@@ -48,13 +54,9 @@ class ResultScreen extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
+              const SizedBox(height: 20.0),
 
-              const SizedBox(height: 25.0),
-
-              Text(
-                'تموم شد و رفت !',
-                style: textTheme.titleLarge,
-              ),
+              QuizTitleWidget(textTheme: textTheme),
 
               const SizedBox(height: 25.0),
 
@@ -63,7 +65,8 @@ class ResultScreen extends StatelessWidget {
               const SizedBox(height: 20.0),
 
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 15.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 15.0),
                 margin: const EdgeInsets.symmetric(horizontal: 15.0),
                 width: width,
                 decoration: BoxDecoration(
@@ -113,12 +116,11 @@ class ResultScreen extends StatelessWidget {
                                 Directionality(
                                   textDirection: TextDirection.ltr,
                                   child: Text(
-                                    '${QuizScreen.quizPercentages[index]} %',
+                                    '${QuizScreen.quizPercentages[index]} %'
+                                        .toPersianDigit(),
                                     style: TextStyle(
                                       color: primaryColor,
-                                      fontFamily: 'yekan',
                                       fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
@@ -147,15 +149,19 @@ class ResultScreen extends StatelessWidget {
                     backgroundColor: primaryColor,
                     elevation: 0.0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.home),
-                      SizedBox(width: 10.0),
-                      Text(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/home_on.svg',
+                        width: 22.0,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 10.0),
+                      const Text(
                         'صفحه اصلی',
                         style:
                             TextStyle(fontSize: 12.0, fontFamily: 'iransans'),

@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quiz_online/features/feature_profile/presentation/screens/profile_screen.dart';
+import 'package:hive/hive.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:quiz_online/features/feature_profile/data/models/quiz_model.dart';
 import 'package:quiz_online/features/feature_quiz/data/models/question_model.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/bloc/quiz_cubit/quiz_cubit.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/bloc/select_option_cubit/change_option_index_cubit.dart';
@@ -29,7 +33,7 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   // options
-  List<String> optionsList = ['1', '2', '3', '4'];
+  List<String> optionsList = ['4', '3', '2', '1'];
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +84,10 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircularProgressIndicator(strokeWidth: 3.0),
+                      CircularProgressIndicator(
+                        color: primaryColor,
+                        strokeWidth: 3.0,
+                      ),
                       const SizedBox(height: 25.0),
                       Text(
                         'در حال دریافت اطلاعات ...',
@@ -98,6 +105,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
                 return Scaffold(
                   body: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     child: Column(
                       children: [
                         const SizedBox(height: 10.0),
@@ -108,8 +116,6 @@ class _QuizScreenState extends State<QuizScreen> {
                               return Container(
                                 padding: const EdgeInsets.only(
                                   top: 10.0,
-                                  left: 5.0,
-                                  right: 5.0,
                                   bottom: 30.0,
                                 ),
                                 margin: const EdgeInsets.symmetric(
@@ -117,11 +123,12 @@ class _QuizScreenState extends State<QuizScreen> {
                                 width: width,
                                 decoration: BoxDecoration(
                                   color: cardColor,
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                   boxShadow: [
                                     BoxShadow(
-                                      blurRadius: 5.0,
+                                      blurRadius: 15.0,
                                       color: Colors.grey.shade200,
+                                      offset: const Offset(0, 3),
                                     ),
                                   ],
                                 ),
@@ -144,25 +151,73 @@ class _QuizScreenState extends State<QuizScreen> {
                                       useOldImageOnUrlChange: true,
                                     ),
 
-                                    const SizedBox(height: 30.0),
+                                    const SizedBox(height: 15.0),
 
                                     // options
                                     BlocBuilder<ChangeOptionIndexCubit, int>(
                                       builder: (context, state) {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: List.generate(
-                                            optionsList.length,
-                                            (optionIndex) {
-                                              return OptionWidget(
-                                                questionModel: questionModel,
-                                                width: width,
-                                                index: index,
-                                                optionIndex: optionIndex,
-                                                optionsList: optionsList,
-                                              );
-                                            },
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15.0),
+                                          child: Column(
+                                            children: [
+                                              // حالت هیچدام
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(right: 10.0),
+                                                    child: Text(
+                                                      'هیچکدام',
+                                                      style:
+                                                          textTheme.labelMedium,
+                                                    ),
+                                                  ),
+                                                  Switch(
+                                                    activeColor: primaryColor,
+                                                    value: questionModel
+                                                                .results![index]
+                                                                .answer ==
+                                                            'هیچکدام'
+                                                        ? true
+                                                        : false,
+                                                    onChanged: (value) {
+                                                      questionModel
+                                                          .results![index]
+                                                          .answer = 'هیچکدام';
+
+                                                      BlocProvider.of<
+                                                                  ChangeOptionIndexCubit>(
+                                                              context)
+                                                          .changeOptionIndexEvent(
+                                                              -1);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 12.0),
+                                              // options
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: List.generate(
+                                                  optionsList.length,
+                                                  (optionIndex) {
+                                                    return OptionWidget(
+                                                      questionModel:
+                                                          questionModel,
+                                                      width: width,
+                                                      index: index,
+                                                      optionIndex: optionIndex,
+                                                      optionsList: optionsList,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         );
                                       },
@@ -183,7 +238,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     backgroundColor: primaryColor,
                     elevation: 0.0,
                     child: const Icon(Icons.done_rounded),
-                    onPressed: () {
+                    onPressed: () async {
                       // var correctAnswersList = [];
                       // for (var i = 0; i < questionModel.results!.length; i++) {
                       //   correctAnswersList
@@ -204,10 +259,15 @@ class _QuizScreenState extends State<QuizScreen> {
                         percentCalculator(questionModel, 8, 9);
                       }
 
-                      // add quiz to quizes in profile screen
-                      ProfileScreen.quizesList
-                          .add(QuizTitleWidget(textTheme: textTheme));
+                      // add quiz to database for profile screen
+                      await Hive.box<QuizModel>('quizBox').add(
+                        QuizModel(
+                          title: QuizScreen.quizTitle,
+                          date: DateTime.now().toPersianDateStr(strMonth: true),
+                        ),
+                      );
 
+                      // go to Result Screen
                       Navigator.pushReplacementNamed(
                           context, ResultScreen.routeName);
                     },
@@ -227,10 +287,13 @@ class _QuizScreenState extends State<QuizScreen> {
                       Icon(
                         Icons.wifi_off_rounded,
                         color: primaryColor,
-                        size: 90.0,
+                        size: 80.0,
                       ),
                       const SizedBox(height: 10.0),
-                      Text(quizDataError.errorMessage),
+                      Text(
+                        quizDataError.errorMessage,
+                        style: textTheme.labelMedium,
+                      ),
                       const SizedBox(height: 15.0),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -239,7 +302,7 @@ class _QuizScreenState extends State<QuizScreen> {
                             backgroundColor: primaryColor,
                             elevation: 0.0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(12.0),
                             )),
                         child: const Text(
                           'دوباره امتحان کنید',
@@ -292,7 +355,12 @@ class _QuizScreenState extends State<QuizScreen> {
         100);
 
     // QuizScreen.quizPercentages.clear();
-    QuizScreen.quizPercentages.add(percent.toStringAsFixed(1));
+
+    if (percent % 10 == 0) {
+      QuizScreen.quizPercentages.add(percent.toStringAsFixed(0));
+    } else {
+      QuizScreen.quizPercentages.add(percent.toStringAsFixed(1));
+    }
 
     // print(correctAnswersList);
     // print(wrongAnswersList);

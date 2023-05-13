@@ -48,7 +48,8 @@ dependencies:
   lottie: ^2.3.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-
+  persian_number_utility: ^1.1.3
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -90,14 +91,14 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: yekan
-      fonts:
-        - asset: assets/fonts/Yekan.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
     - family: iransans
       fonts:
         - asset: assets/fonts/iransans.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+    - family: iransansDn
+      fonts:
+        - asset: assets/fonts/iranSansDN.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #

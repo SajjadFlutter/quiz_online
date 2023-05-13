@@ -33,8 +33,9 @@ class CategoryBox extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
             BoxShadow(
-              blurRadius: 5.0,
+              blurRadius: 15.0,
               color: Colors.grey.shade200,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -42,8 +43,8 @@ class CategoryBox extends StatelessWidget {
           children: [
             SvgPicture.asset(
               image,
-              width: 130.0,
-              height: 130.0,
+              width: 125.0,
+              height: 125.0,
             ),
             const SizedBox(width: 15.0),
             Flexible(
@@ -51,7 +52,7 @@ class CategoryBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'رشته $title',
+                    'کنکور $title',
                     style: textTheme.titleMedium,
                   ),
                   const SizedBox(height: 5.0),

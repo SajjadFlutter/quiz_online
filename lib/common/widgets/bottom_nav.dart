@@ -74,25 +74,28 @@ class BottomNavItem extends StatelessWidget {
         // go to Home Screen
         controller.jumpToPage(index);
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            state == index
-                ? 'assets/images/${iconName}_on.svg'
-                : 'assets/images/${iconName}_off.svg',
-            width: 22.0,
-            color: state == index ? primaryColor : Colors.grey,
-          ),
-          const SizedBox(height: 5.0),
-          Text(
-            title,
-            style: TextStyle(
+      child: Container(
+        color: Colors.transparent,
+        width: MediaQuery.of(context).size.width / 4,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              state == index
+                  ? 'assets/images/${iconName}_on.svg'
+                  : 'assets/images/${iconName}_off.svg',
+              width: 22.0,
               color: state == index ? primaryColor : Colors.grey,
-              fontSize: 10.0,
             ),
-          ),
-        ],
+            const SizedBox(height: 4.0),
+            Text(
+              title,
+              style: TextStyle(
+                color: state == index ? primaryColor : Colors.grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

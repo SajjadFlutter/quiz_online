@@ -25,7 +25,8 @@ class MyTheme {
       ),
     ),
     cardColor: Colors.white,
-    primaryColor: const Color(0xFF4991E5),
+    primaryColor: Colors.blue,
+    secondaryHeaderColor: Colors.grey.shade600,
   );
 
 // dark theme
@@ -34,21 +35,21 @@ class MyTheme {
     textTheme: TextTheme(
       titleLarge: TextStyle(
         color: Colors.grey.shade100,
-        fontSize: 14.0,
+        fontSize: 16.0,
         fontWeight: FontWeight.bold,
       ),
       titleMedium: TextStyle(
         color: Colors.grey.shade100,
-        fontSize: 12.0,
+        fontSize: 14.0,
         fontWeight: FontWeight.bold,
       ),
       labelMedium: TextStyle(
         color: Colors.grey.shade100,
-        fontSize: 12.0,
+        fontSize: 14.0,
       ),
       bodyMedium: const TextStyle(
         color: Colors.white,
-        fontSize: 10.0,
+        fontSize: 12.0,
       ),
     ),
     cardColor: Colors.grey.shade800,

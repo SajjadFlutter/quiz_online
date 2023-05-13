@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:quiz_online/features/feature_quiz/data/models/question_model.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/bloc/select_option_cubit/change_option_index_cubit.dart';
 
@@ -11,9 +12,6 @@ class OptionWidget extends StatelessWidget {
     required this.index,
     required this.optionIndex,
     required this.optionsList,
-    // required this.answersList,
-    // required this.correctAnswersList,
-    // required this.wrongAnswersList,
   });
 
   final QuestionModel questionModel;
@@ -21,9 +19,6 @@ class OptionWidget extends StatelessWidget {
   final int index;
   final int optionIndex;
   final List<String> optionsList;
-  // final List<String> answersList;
-  // final List<String> correctAnswersList;
-  // final List<String> wrongAnswersList;
 
   @override
   Widget build(BuildContext context) {
@@ -61,20 +56,19 @@ class OptionWidget extends StatelessWidget {
       child: Container(
         // margin: const EdgeInsets.all(8.0),
         width: width / 5.5,
-        height: 40.0,
+        height: 35.0,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color:
               questionModel.results![index].answer == optionsList[optionIndex]
                   ? primaryColor
-                  : primaryColor.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(10.0),
+                  : primaryColor.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(30.0),
         ),
         child: Text(
-          optionsList[optionIndex],
+          optionsList[optionIndex].toPersianDigit(),
           style: TextStyle(
-            fontFamily: 'yekan',
-            fontSize: 18.0,
+            fontSize: 15.0,
             color:
                 questionModel.results![index].answer == optionsList[optionIndex]
                     ? Colors.white
