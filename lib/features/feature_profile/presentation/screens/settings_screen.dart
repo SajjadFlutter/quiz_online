@@ -1,9 +1,12 @@
-// ignore_for_file: unused_field, unnecessary_null_comparison
+// ignore_for_file: unused_field, unnecessary_null_comparison, deprecated_member_use
 
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:quiz_online/common/widgets/custom_btn.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:quiz_online/common/widgets/large_btn.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -32,6 +35,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // change image profile
+  // select image
+  File? _image;
+  Future _pickImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+
+      if (image == null) return;
+
+      File? img = File(image.path);
+      img = await _cropImage(imageFile: img);
+
+      setState(() {
+        _image = img;
+        Navigator.of(context).pop();
+      });
+    } on PlatformException {
+      Navigator.of(context).pop();
+    }
+  }
+  // crop image
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage =
+        await ImageCropper().cropImage(sourcePath: imageFile.path);
+    if (croppedImage == null) return null;
+    return File(croppedImage.path);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,33 +84,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios_rounded,
+            Icons.arrow_back_rounded,
             color: secondaryHeaderColor,
-            size: 20.0,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  CupertinoIcons.moon_fill,
-                  color: secondaryHeaderColor,
-                  size: 20.0,
-                ),
-              ),
-              const SizedBox(width: 5.0),
-            ],
-          ),
-        ],
+        // actions: [
+        //   Row(
+        //     children: [
+        //       IconButton(
+        //         onPressed: () {},
+        //         icon: Icon(
+        //           CupertinoIcons.moon_fill,
+        //           color: secondaryHeaderColor,
+        //           size: 20.0,
+        //         ),
+        //       ),
+        //       const SizedBox(width: 5.0),
+        //     ],
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
-          SizedBox(height: height * 0.07),
+          const SizedBox(height: 40.0),
 
           // image profile
           GestureDetector(
@@ -125,7 +153,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () => _pickImage(ImageSource.gallery),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -147,7 +175,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                             const SizedBox(width: 20.0),
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () => _pickImage(ImageSource.camera),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -179,8 +207,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Stack(
               children: [
                 Container(
-                  width: 100.0,
-                  height: 100.0,
+                  width: 95.0,
+                  height: 95.0,
                   padding: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
@@ -188,10 +216,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100.0),
-                    child: SvgPicture.asset(
-                      'assets/images/profile.svg',
-                      fit: BoxFit.cover,
-                    ),
+                    child: _image == null
+                        ? SvgPicture.asset(
+                            'assets/images/profile.svg',
+                            fit: BoxFit.cover,
+                            color: Colors.grey.shade400,
+                          )
+                        : Image.file(File(_image!.path), fit: BoxFit.cover),
                   ),
                 ),
                 Positioned(
@@ -216,7 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          SizedBox(height: height * 0.07),
+          const SizedBox(height: 50.0),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -301,7 +332,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   SizedBox(height: height * 0.05),
                   //
-                  CustomBtn(
+                  LargeBtn(
                     primaryColor: primaryColor,
                     formKey: _formKey,
                     title: 'ویرایش',

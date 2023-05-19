@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-class CustomBtn extends StatelessWidget {
-  const CustomBtn({
+class LargeBtn extends StatelessWidget {
+  const LargeBtn({
     super.key,
     required this.primaryColor,
     required GlobalKey<FormState> formKey,

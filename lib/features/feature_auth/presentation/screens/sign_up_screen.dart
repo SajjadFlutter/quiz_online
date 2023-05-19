@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'package:quiz_online/common/widgets/custom_btn.dart';
+import 'package:quiz_online/common/widgets/large_btn.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -123,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.05),
                   //
-                  CustomBtn(
+                  LargeBtn(
                     primaryColor: primaryColor,
                     formKey: _formKey,
                     title: 'ثبت نام',

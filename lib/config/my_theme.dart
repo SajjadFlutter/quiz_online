@@ -7,12 +7,12 @@ class MyTheme {
     textTheme: TextTheme(
       titleLarge: TextStyle(
         color: Colors.grey.shade800,
-        fontSize: 14.0,
+        fontSize: 16.0,
         fontWeight: FontWeight.bold,
       ),
       titleMedium: TextStyle(
         color: Colors.grey.shade800,
-        fontSize: 12.0,
+        fontSize: 14.0,
         fontWeight: FontWeight.bold,
       ),
       labelMedium: TextStyle(
@@ -25,7 +25,7 @@ class MyTheme {
       ),
     ),
     cardColor: Colors.white,
-    primaryColor: Colors.blue,
+    primaryColor: const Color(0xFF6EAAFF),
     secondaryHeaderColor: Colors.grey.shade600,
   );
 

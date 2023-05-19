@@ -8,6 +8,8 @@ import 'package:quiz_online/common/bloc/borrom_nav_cubit/change_index_cubit.dart
 import 'package:quiz_online/common/widgets/main_wrapper.dart';
 import 'package:quiz_online/config/my_theme.dart';
 import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
+import 'package:quiz_online/features/feature_intro/presentation/bloc/splash_cubit/splash_cubit.dart';
+import 'package:quiz_online/features/feature_intro/presentation/screens/onboarding.dart';
 import 'package:quiz_online/features/feature_profile/data/models/quiz_model.dart';
 import 'package:quiz_online/features/feature_profile/presentation/screens/settings_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
@@ -36,7 +38,8 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => ChangeIndexCubit()),
+        BlocProvider(create: (_) => SplashCubit()),
+        BlocProvider(create: (_) => ChangeIndexCubit()),
       ],
       child: const MyApp(),
     ),
@@ -69,8 +72,10 @@ class MyApp extends StatelessWidget {
         QuizScreen.routeName: (context) => const QuizScreen(),
         ResultScreen.routeName: (context) => const ResultScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
+        OnboardingScreen.routeName: (context) => OnboardingScreen(),
       },
-      home: MainWrapper(),
+      title: 'آزمون آنلاین',
+      home: OnboardingScreen(),
     );
   }
 

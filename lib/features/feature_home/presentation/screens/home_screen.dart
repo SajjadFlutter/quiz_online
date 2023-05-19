@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:quiz_online/common/widgets/title_widget.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_type_cubit.dart';
@@ -46,11 +49,12 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(30.0),
-                      child: Image.asset(
-                        'assets/images/profile.png',
-                        width: 45.0,
-                        height: 45.0,
+                      child: SvgPicture.asset(
+                        'assets/images/profile.svg',
+                        width: 44.0,
+                        height: 44.0,
                         fit: BoxFit.cover,
+                        color: Colors.grey.shade400,
                       ),
                     ),
                     const SizedBox(width: 10.0),
@@ -99,7 +103,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 15.0),
+          const SizedBox(height: 20.0),
 
           const TitleWidget(title: 'آزمون های در دسترس'),
 
@@ -114,7 +118,6 @@ class HomeScreen extends StatelessWidget {
                   context, height, width, defualtIndex, categoryList[0]);
             },
           ),
-          const SizedBox(height: 15.0),
           CategoryBox(
             height: height,
             image: 'assets/images/tajrobi.svg',
@@ -124,7 +127,6 @@ class HomeScreen extends StatelessWidget {
                   context, height, width, defualtIndex, categoryList[1]);
             },
           ),
-          const SizedBox(height: 15.0),
           CategoryBox(
             height: height,
             image: 'assets/images/ensani.svg',
@@ -286,7 +288,8 @@ class HomeScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 20.0),
                                         Text(
-                                          '${konkurYears[index]}'.toPersianDigit(),
+                                          '${konkurYears[index]}'
+                                              .toPersianDigit(),
                                           style: TextStyle(
                                             color: index == state
                                                 ? Colors.white
@@ -331,7 +334,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         onPressed: () {
                           QuizScreen.categoryTitle = categoryTitle;
-                          QuizScreen.quizTitle = 'کنکور $categoryTitle ${quizYear.toString().toPersianDigit()}';
+                          QuizScreen.quizTitle =
+                              'کنکور $categoryTitle ${quizYear.toString().toPersianDigit()}';
                           // ریاضی
                           if (categoryTitle == 'ریاضی') {
                             // lessons list

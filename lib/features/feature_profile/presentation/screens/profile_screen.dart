@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,12 +73,12 @@ class ProfileScreen extends StatelessWidget {
               width: width,
               child: Column(
                 children: [
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 40.0),
 
                   // image profile
                   Container(
-                    width: 100.0,
-                    height: 100.0,
+                    width: 95.0,
+                    height: 95.0,
                     padding: const EdgeInsets.all(4.0),
                     decoration: BoxDecoration(
                       color: Colors.transparent,
@@ -86,9 +86,10 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100.0),
-                      child: Image.asset(
-                        'assets/images/profile.png',
+                      child: SvgPicture.asset(
+                        'assets/images/profile.svg',
                         fit: BoxFit.cover,
+                        color: Colors.grey.shade400,
                       ),
                     ),
                   ),
@@ -111,17 +112,17 @@ class ProfileScreen extends StatelessWidget {
                       if (state == 0) {
                         return Column(
                           children: [
-                            SizedBox(height: height * 0.05),
+                            SizedBox(height: height * 0.08),
                             SvgPicture.asset(
-                              'assets/images/empty_quiz_list.svg',
-                              width: 230.0,
-                              height: 230.0,
+                              'assets/images/empty_list.svg',
+                              width: 170.0,
+                              height: 170.0,
                             ),
+                            const SizedBox(height: 10.0),
                             Text(
-                              'شما تا کنون آزمونی ثبت نکرده اید !',
+                              'شما تا کنون آزمونی ثبت نکرده اید!',
                               style: textTheme.labelMedium,
                             ),
-                            const SizedBox(height: 50.0),
                           ],
                         );
                       } else {
@@ -144,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
                                     width: width,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15.0, vertical: 20.0),
-                                    margin: const EdgeInsets.only(bottom: 15.0),
+                                    margin: const EdgeInsets.only(bottom: 10.0),
                                     decoration: BoxDecoration(
                                       color: cardColor,
                                       borderRadius: BorderRadius.circular(15.0),

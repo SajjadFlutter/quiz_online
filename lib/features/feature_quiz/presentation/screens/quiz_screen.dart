@@ -287,7 +287,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       Icon(
                         Icons.wifi_off_rounded,
                         color: primaryColor,
-                        size: 80.0,
+                        size: 70.0,
                       ),
                       const SizedBox(height: 10.0),
                       Text(
@@ -305,7 +305,7 @@ class _QuizScreenState extends State<QuizScreen> {
                               borderRadius: BorderRadius.circular(12.0),
                             )),
                         child: const Text(
-                          'دوباره امتحان کنید',
+                          'تلاش مجدد',
                           style: TextStyle(
                             fontFamily: 'iransans',
                             fontSize: 12.0,

@@ -26,7 +26,7 @@ class CategoryBox extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-        margin: const EdgeInsets.symmetric(horizontal: 15.0),
+        margin: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10.0),
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
