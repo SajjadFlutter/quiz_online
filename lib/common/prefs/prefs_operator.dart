@@ -1,7 +1,6 @@
 import 'package:quiz_online/locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class PrefsOperator {
   late SharedPreferences sharedPreferences;
 
@@ -9,6 +8,7 @@ class PrefsOperator {
     sharedPreferences = locator<SharedPreferences>();
   }
 
+  // for Onboarding screen
   changeIntroState() {
     sharedPreferences.setBool('showIntro', false);
   }

@@ -1,12 +1,17 @@
 // ignore_for_file: unused_field, unnecessary_null_comparison, deprecated_member_use
 
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:quiz_online/common/bloc/profile_image_cubit/change_profile_cubit.dart';
 import 'package:quiz_online/common/widgets/large_btn.dart';
+import 'package:quiz_online/locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -34,32 +39,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  // change image profile
-  // select image
-  File? _image;
-  Future _pickImage(ImageSource source) async {
-    try {
-      final image = await ImagePicker().pickImage(source: source);
+  @override
+  void initState() {
+    super.initState();
 
-      if (image == null) return;
-
-      File? img = File(image.path);
-      img = await _cropImage(imageFile: img);
-
-      setState(() {
-        _image = img;
-        Navigator.of(context).pop();
-      });
-    } on PlatformException {
-      Navigator.of(context).pop();
-    }
-  }
-  // crop image
-  Future<File?> _cropImage({required File imageFile}) async {
-    CroppedFile? croppedImage =
-        await ImageCropper().cropImage(sourcePath: imageFile.path);
-    if (croppedImage == null) return null;
-    return File(croppedImage.path);
+    loadImage();
   }
 
   @override
@@ -145,8 +129,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             const SizedBox(height: 25.0),
                             Text(
                               'تغییر تصویر پروفایل',
-                              style: textTheme.titleLarge,
+                              style: textTheme.labelLarge,
                             ),
+                            const SizedBox(height: 20.0),
                           ],
                         ),
                         Row(
@@ -154,42 +139,102 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: [
                             GestureDetector(
                               onTap: () => _pickImage(ImageSource.gallery),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.photo,
-                                    size: 25.0,
-                                    color: secondaryHeaderColor,
-                                  ),
-                                  const SizedBox(width: 5.0),
-                                  Text(
-                                    'گالری',
-                                    style: TextStyle(
-                                      color: secondaryHeaderColor,
-                                      fontSize: 14.0,
+                              child: Container(
+                                width: 90.0,
+                                height: 90.0,
+                                decoration: BoxDecoration(
+                                  color: primaryColor.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      size: 30.0,
+                                      color: primaryColor,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 6.0),
+                                    Text(
+                                      'از گالری',
+                                      style: TextStyle(
+                                        color: primaryColor,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 20.0),
+                            SizedBox(width: _imagePath == null ? 40.0 : 20.0),
                             GestureDetector(
                               onTap: () => _pickImage(ImageSource.camera),
+                              child: Container(
+                                width: 90.0,
+                                height: 90.0,
+                                decoration: BoxDecoration(
+                                  color: primaryColor.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Transform(
+                                      alignment: Alignment.center,
+                                      transform: Matrix4.rotationY(110.0),
+                                      child: Icon(
+                                        Icons.add_a_photo_outlined,
+                                        size: 30.0,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6.0),
+                                    Text(
+                                      'از دوربین',
+                                      style: TextStyle(
+                                        color: primaryColor,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: _imagePath == null ? false : true,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.camera_alt_rounded,
-                                    size: 25.0,
-                                    color: secondaryHeaderColor,
-                                  ),
-                                  const SizedBox(width: 5.0),
-                                  Text(
-                                    'دوربین',
-                                    style: TextStyle(
-                                      color: secondaryHeaderColor,
-                                      fontSize: 14.0,
+                                  const SizedBox(width: 20.0),
+                                  GestureDetector(
+                                    onTap: () => deleteImage(),
+                                    child: Container(
+                                      width: 90.0,
+                                      height: 90.0,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.redAccent.withOpacity(0.15),
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                      ),
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.delete,
+                                            size: 26.0,
+                                            color: Colors.redAccent,
+                                          ),
+                                          SizedBox(height: 10.0),
+                                          Text(
+                                            'حذف',
+                                            style: TextStyle(
+                                              color: Colors.redAccent,
+                                              fontSize: 12.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -207,8 +252,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Stack(
               children: [
                 Container(
-                  width: 95.0,
-                  height: 95.0,
+                  width: 100.0,
+                  height: 100.0,
                   padding: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
@@ -216,13 +261,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100.0),
-                    child: _image == null
-                        ? SvgPicture.asset(
-                            'assets/images/profile.svg',
-                            fit: BoxFit.cover,
-                            color: Colors.grey.shade400,
-                          )
-                        : Image.file(File(_image!.path), fit: BoxFit.cover),
+                    child: _imagePath != null
+                        ? Image.file(File(_imagePath!), fit: BoxFit.cover)
+                        : _image != null
+                            ? Image.file(File(_image!.path), fit: BoxFit.cover)
+                            : SvgPicture.asset(
+                                'assets/images/profile.svg',
+                                fit: BoxFit.cover,
+                                color: Colors.grey.shade400,
+                              ),
                   ),
                 ),
                 Positioned(
@@ -267,12 +314,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     controller: usernameController,
                     // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'لطفا نام کاربری را وارد کنید.';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'لطفا نام کاربری را وارد کنید.';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: height * 0.02),
                   TextFormField(
@@ -287,14 +334,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'لطفا ایمیل خود را وارد کنید.';
-                      } else if (!value.endsWith('@gmail.com')) {
-                        return 'لطفا یک ایمیل با پسوند @gmail.com وارد کنید.';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'لطفا ایمیل خود را وارد کنید.';
+                    //   } else if (!value.endsWith('@gmail.com')) {
+                    //     return 'لطفا یک ایمیل با پسوند @gmail.com وارد کنید.';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: height * 0.02),
                   TextFormField(
@@ -319,24 +366,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'لطفا گذرواژه خود را وارد کنید.';
-                      } else if (value.length < 8) {
-                        return 'حداقل 8 کاراکتر وارد کنید.';
-                      } else if (value.length > 20) {
-                        return 'حداکثر 20 کاراکتر وارد کنید.';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'لطفا گذرواژه خود را وارد کنید.';
+                    //   } else if (value.length < 8) {
+                    //     return 'حداقل 8 کاراکتر وارد کنید.';
+                    //   } else if (value.length > 20) {
+                    //     return 'حداکثر 20 کاراکتر وارد کنید.';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: height * 0.05),
                   //
                   LargeBtn(
                     primaryColor: primaryColor,
                     formKey: _formKey,
-                    title: 'ویرایش',
+                    title: 'ذخیره',
                     onPressed: () {
+                      if (_image == null) {
+                        BlocProvider.of<ChangeProfileCubit>(context)
+                            .changeProfileImageEvent(
+                                'assets/images/profile.svg');
+                      } else {
+                        saveImage(_image!.path);
+                      }
                       // Validate returns true if the form is valid, or false otherwise.
                       if (_formKey.currentState!.validate()) {
                         // userProvider.callRegisterApi(nameController.text, emailController.text, passwordController.text);
@@ -350,5 +404,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  // change image profile
+  // select image
+  File? _image;
+  Future _pickImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+
+      File? img = File(image!.path);
+      img = await _cropImage(imageFile: img);
+
+      setState(() {
+        _image = img;
+        Navigator.pop(context);
+      });
+    } on PlatformException {
+      Navigator.pop(context);
+    }
+  }
+
+  // crop image
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage =
+        await ImageCropper().cropImage(sourcePath: imageFile.path);
+    if (croppedImage == null) return null;
+    return File(croppedImage.path);
+  }
+
+  String? _imagePath;
+  Future<void> saveImage(String path) async {
+    SharedPreferences sharedPreferences = locator<SharedPreferences>();
+    sharedPreferences.setString('imagePath', path);
+
+    BlocProvider.of<ChangeProfileCubit>(context).changeProfileImageEvent(path);
+  }
+
+  Future<void> loadImage() async {
+    SharedPreferences sharedPreferences = locator<SharedPreferences>();
+
+    setState(() {
+      _imagePath = sharedPreferences.getString('imagePath');
+    });
+  }
+
+  Future<void> deleteImage() async {
+    SharedPreferences sharedPreferences = locator<SharedPreferences>();
+    sharedPreferences.remove('imagePath');
+
+    setState(() {
+      _imagePath = null;
+      _image = null;
+    });
+
+    Navigator.pop(context);
   }
 }

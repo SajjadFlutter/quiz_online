@@ -46,7 +46,7 @@ class CategoryBox extends StatelessWidget {
               width: 125.0,
               height: 125.0,
             ),
-            const SizedBox(width: 15.0),
+            const SizedBox(width: 10.0),
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -12,6 +12,11 @@ class MyTheme {
       ),
       titleMedium: TextStyle(
         color: Colors.grey.shade800,
+        fontSize: 12.0,
+        fontWeight: FontWeight.bold,
+      ),
+      labelLarge: TextStyle(
+        color: Colors.grey.shade800,
         fontSize: 14.0,
         fontWeight: FontWeight.bold,
       ),
@@ -27,6 +32,7 @@ class MyTheme {
     cardColor: Colors.white,
     primaryColor: const Color(0xFF6EAAFF),
     secondaryHeaderColor: Colors.grey.shade600,
+    hintColor: Colors.grey.shade800,
   );
 
 // dark theme

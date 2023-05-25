@@ -28,7 +28,7 @@ class ResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'نتیجه آزمون',
-          style: textTheme.titleLarge,
+          style: textTheme.titleMedium,
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,

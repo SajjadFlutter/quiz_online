@@ -1,14 +1,19 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, unnecessary_null_comparison
+
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:quiz_online/common/bloc/profile_image_cubit/change_profile_cubit.dart';
 import 'package:quiz_online/common/widgets/title_widget.dart';
 import 'package:quiz_online/features/feature_home/presentation/widgets/property_box.dart';
 import 'package:quiz_online/features/feature_profile/data/models/quiz_model.dart';
 import 'package:quiz_online/features/feature_profile/presentation/bloc/quiz_list_length/quiz_list_length_cubit.dart';
 import 'package:quiz_online/features/feature_profile/presentation/screens/settings_screen.dart';
+import 'package:quiz_online/locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -37,6 +42,14 @@ class ProfileScreen extends StatelessWidget {
         // call quiz list length
         BlocProvider.of<QuizListLengthCubit>(context).callQuizListLengthEvent();
 
+        SharedPreferences sharedPreferences = locator<SharedPreferences>();
+
+        sharedPreferences.getString('imagePath') != null
+            ? BlocProvider.of<ChangeProfileCubit>(context)
+                .changeProfileImageEvent(
+                    sharedPreferences.getString('imagePath'))
+            : null;
+
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -47,16 +60,6 @@ class ProfileScreen extends StatelessWidget {
             elevation: 0.0,
             centerTitle: true,
             automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.notifications_rounded,
-                  color: secondaryHeaderColor,
-                ),
-              ),
-              const SizedBox(width: 5.0),
-            ],
             leading: IconButton(
               icon: Icon(
                 Icons.settings,
@@ -66,6 +69,16 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.pushNamed(context, SettingsScreen.routeName);
               },
             ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () {},
+            //     icon: Icon(
+            //       Icons.notifications_rounded,
+            //       color: secondaryHeaderColor,
+            //     ),
+            //   ),
+            //   const SizedBox(width: 5.0),
+            // ],
           ),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -77,8 +90,8 @@ class ProfileScreen extends StatelessWidget {
 
                   // image profile
                   Container(
-                    width: 95.0,
-                    height: 95.0,
+                    width: 100.0,
+                    height: 100.0,
                     padding: const EdgeInsets.all(4.0),
                     decoration: BoxDecoration(
                       color: Colors.transparent,
@@ -86,10 +99,18 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100.0),
-                      child: SvgPicture.asset(
-                        'assets/images/profile.svg',
-                        fit: BoxFit.cover,
-                        color: Colors.grey.shade400,
+                      child: BlocBuilder<ChangeProfileCubit, String>(
+                        builder: (context, state) {
+                          if (state == 'assets/images/profile.svg') {
+                            return SvgPicture.asset(
+                              state,
+                              fit: BoxFit.cover,
+                              color: Colors.grey.shade400,
+                            );
+                          } else {
+                            return Image.file(File(state), fit: BoxFit.cover);
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -98,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
 
                   Text(
                     'سجاد غلامیان',
-                    style: textTheme.titleLarge,
+                    style: textTheme.labelLarge,
                   ),
 
                   const SizedBox(height: 35.0),

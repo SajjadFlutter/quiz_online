@@ -60,14 +60,14 @@ class _SplashScreenState extends State<SplashScreen> {
                   children: [
                     SvgPicture.asset(
                       'assets/images/logo_icon.svg',
-                      width: 110.0,
+                      width: 125.0,
                       color: primaryColor,
                     ),
                     const SizedBox(height: 15.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 10.0),
+                        const SizedBox(width: 15.0),
                         Text('آزمون آنلاین', style: textTheme.titleLarge),
                       ],
                     ),

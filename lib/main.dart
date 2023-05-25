@@ -10,11 +10,15 @@ import 'package:quiz_online/config/my_theme.dart';
 import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/bloc/splash_cubit/splash_cubit.dart';
 import 'package:quiz_online/features/feature_intro/presentation/screens/onboarding.dart';
+import 'package:quiz_online/features/feature_intro/presentation/screens/splash_screen.dart';
 import 'package:quiz_online/features/feature_profile/data/models/quiz_model.dart';
+import 'package:quiz_online/features/feature_profile/presentation/screens/profile_screen.dart';
 import 'package:quiz_online/features/feature_profile/presentation/screens/settings_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/result_screen.dart';
 import 'package:quiz_online/locator.dart';
+
+import 'common/bloc/profile_image_cubit/change_profile_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +44,7 @@ void main() async {
       providers: [
         BlocProvider(create: (_) => SplashCubit()),
         BlocProvider(create: (_) => ChangeIndexCubit()),
+        BlocProvider(create: (_) => ChangeProfileCubit()),
       ],
       child: const MyApp(),
     ),
@@ -69,13 +74,15 @@ class MyApp extends StatelessWidget {
       routes: {
         MainWrapper.routeName: (context) => MainWrapper(),
         HomeScreen.routeName: (context) => HomeScreen(),
+        ProfileScreen.routeName: (context) => const ProfileScreen(),
         QuizScreen.routeName: (context) => const QuizScreen(),
         ResultScreen.routeName: (context) => const ResultScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         OnboardingScreen.routeName: (context) => OnboardingScreen(),
       },
       title: 'آزمون آنلاین',
-      home: OnboardingScreen(),
+      // home: const SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 
