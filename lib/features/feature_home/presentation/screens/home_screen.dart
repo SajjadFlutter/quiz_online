@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
 
       sharedPreferences.getString('imagePath') != null
           ? BlocProvider.of<ChangeProfileCubit>(context)
-              .changeProfileImageEvent(sharedPreferences.getString('imagePath'))
+              .changeUserInfoEvent(sharedPreferences.getString('imagePath'))
           : null;
 
       return SingleChildScrollView(
@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                'سلام سجاد',
+                                'سلام ${sharedPreferences.getString('username')}',
                                 style: textTheme.titleMedium,
                               ),
                               const SizedBox(width: 6.0),

@@ -7,13 +7,13 @@ class LargeBtn extends StatelessWidget {
     super.key,
     required this.primaryColor,
     required GlobalKey<FormState> formKey,
-    required this.title,
     required this.onPressed,
+    required this.child,
   }) : _formKey = formKey;
 
   final Color primaryColor;
   final GlobalKey<FormState> _formKey;
-  final String title;
+  final Widget child;
   final Function() onPressed;
 
   @override
@@ -30,7 +30,7 @@ class LargeBtn extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        child: Text(title),
+        child: child,
       ),
     );
   }

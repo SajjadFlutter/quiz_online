@@ -7,6 +7,9 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:quiz_online/common/bloc/borrom_nav_cubit/change_index_cubit.dart';
 import 'package:quiz_online/common/widgets/main_wrapper.dart';
 import 'package:quiz_online/config/my_theme.dart';
+import 'package:quiz_online/features/feature_auth/presentation/screens/login_screen.dart';
+import 'package:quiz_online/features/feature_auth/presentation/screens/reset_password_screen.dart';
+import 'package:quiz_online/features/feature_auth/presentation/screens/sign_up_screen.dart';
 import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/bloc/splash_cubit/splash_cubit.dart';
 import 'package:quiz_online/features/feature_intro/presentation/screens/onboarding.dart';
@@ -73,15 +76,17 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         MainWrapper.routeName: (context) => MainWrapper(),
+        OnboardingScreen.routeName: (context) => OnboardingScreen(),
+        SignUpScreen.routeName: (context) => const SignUpScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        ResetPasswordScreen.routeName: (context) => const ResetPasswordScreen(),
         HomeScreen.routeName: (context) => HomeScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
         QuizScreen.routeName: (context) => const QuizScreen(),
         ResultScreen.routeName: (context) => const ResultScreen(),
-        SettingsScreen.routeName: (context) => const SettingsScreen(),
-        OnboardingScreen.routeName: (context) => OnboardingScreen(),
       },
       title: 'آزمون آنلاین',
-      // home: const SplashScreen(),
       home: const SplashScreen(),
     );
   }

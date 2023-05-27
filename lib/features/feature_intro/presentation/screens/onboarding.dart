@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_online/common/prefs/prefs_operator.dart';
-import 'package:quiz_online/common/widgets/main_wrapper.dart';
+import 'package:quiz_online/features/feature_auth/presentation/screens/sign_up_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/bloc/intro_cubit/intro_cubit.dart';
 import 'package:quiz_online/features/feature_intro/presentation/widgets/intro_btn.dart';
 import 'package:quiz_online/features/feature_intro/presentation/widgets/intro_page.dart';
@@ -24,7 +24,7 @@ class OnboardingScreen extends StatelessWidget {
     ),
     IntroPage(
       title: 'داستان چیه؟',
-      description: 'اینجا میتونی خودت رو با آزمون های سال های قبل کنکور آماده کنی',
+      description: 'اینجا میتونی خودت رو با آزمون های سال های قبل کنکور آماده کنی!',
       image: "assets/images/intro_2.svg",
     ),
     IntroPage(
@@ -91,7 +91,7 @@ class OnboardingScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: height * 0.2),
+                  padding: EdgeInsets.only(bottom: height * 0.15),
                   child: BlocBuilder<IntroCubit, IntroState>(
                     builder: (context, state) {
                       if (state.showGetStart) {
@@ -101,12 +101,12 @@ class OnboardingScreen extends StatelessWidget {
                           onPressed: () {
                             PrefsOperator prefsOperator =
                                 locator<PrefsOperator>();
-                            prefsOperator.changeIntroState();
+                            prefsOperator.changeIntroState(false);
 
                             Navigator.pushNamedAndRemoveUntil(
                               context,
-                              MainWrapper.routeName,
-                              ModalRoute.withName('/main_wrapper'),
+                              SignUpScreen.routeName,
+                              ModalRoute.withName('/signup_screen'),
                             );
                           },
                         );

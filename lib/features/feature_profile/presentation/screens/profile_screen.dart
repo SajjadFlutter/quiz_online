@@ -46,8 +46,7 @@ class ProfileScreen extends StatelessWidget {
 
         sharedPreferences.getString('imagePath') != null
             ? BlocProvider.of<ChangeProfileCubit>(context)
-                .changeProfileImageEvent(
-                    sharedPreferences.getString('imagePath'))
+                .changeUserInfoEvent(sharedPreferences.getString('imagePath'))
             : null;
 
         return Scaffold(
@@ -118,7 +117,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 15.0),
 
                   Text(
-                    'سجاد غلامیان',
+                    sharedPreferences.getString('username')!,
                     style: textTheme.labelLarge,
                   ),
 

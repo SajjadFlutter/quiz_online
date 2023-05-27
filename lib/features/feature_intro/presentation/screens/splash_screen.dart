@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quiz_online/common/prefs/prefs_operator.dart';
 import 'package:quiz_online/common/widgets/main_wrapper.dart';
 import 'package:quiz_online/common/widgets/small_btn.dart';
+import 'package:quiz_online/features/feature_auth/presentation/screens/sign_up_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/bloc/splash_cubit/splash_cubit.dart';
 import 'package:quiz_online/features/feature_intro/presentation/screens/onboarding.dart';
 import 'package:quiz_online/locator.dart';
@@ -137,15 +138,25 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> goToHome() async {
     PrefsOperator prefsOperator = locator<PrefsOperator>();
     final isShowIntroScreen = await prefsOperator.getShowState();
+    final isShowSignUpScreen = await prefsOperator.getAuthState();
+
+    print(isShowIntroScreen);
+    print(isShowSignUpScreen);
 
     Future.delayed(
       const Duration(seconds: 3),
       () {
-        if (isShowIntroScreen) {
+        if (isShowIntroScreen && isShowSignUpScreen) {
           Navigator.pushNamedAndRemoveUntil(
             context,
             OnboardingScreen.routeName,
             ModalRoute.withName('/onboarding_screen'),
+          );
+        } else if (!isShowIntroScreen && isShowSignUpScreen) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            SignUpScreen.routeName,
+            ModalRoute.withName('/signup_screen'),
           );
         } else {
           Navigator.pushNamedAndRemoveUntil(

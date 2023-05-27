@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:quiz_online/common/bloc/profile_image_cubit/change_profile_cubit.dart';
+import 'package:quiz_online/common/prefs/prefs_operator.dart';
 import 'package:quiz_online/common/widgets/large_btn.dart';
 import 'package:quiz_online/locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,6 +45,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
 
+    SharedPreferences sharedPreferences = locator<SharedPreferences>();
+    usernameController.text = sharedPreferences.getString('username')!;
+    emailController.text = sharedPreferences.getString('email')!;
+    passwordController.text = sharedPreferences.getString('password')!;
+
     loadImage();
   }
 
@@ -75,21 +82,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Navigator.pop(context);
           },
         ),
-        // actions: [
-        //   Row(
-        //     children: [
-        //       IconButton(
-        //         onPressed: () {},
-        //         icon: Icon(
-        //           CupertinoIcons.moon_fill,
-        //           color: secondaryHeaderColor,
-        //           size: 20.0,
-        //         ),
-        //       ),
-        //       const SizedBox(width: 5.0),
-        //     ],
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            onPressed: () {
+              doUserLogout();
+            },
+            icon: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(110.0),
+              child: Icon(
+                Icons.logout_outlined,
+                color: secondaryHeaderColor,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -242,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(),
+                        const SizedBox(height: 10.0),
                       ],
                     ),
                   );
@@ -301,15 +308,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5.0),
+                    child: Text(
+                      'نام کاربری',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: secondaryHeaderColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   TextFormField(
                     decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(18.0),
                       prefixIcon: Icon(Icons.person),
-                      labelText: 'نام کاربری',
-                      alignLabelWithHint: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      hintText: 'مثلا : علیرضا محمدی',
+                      hintStyle: TextStyle(fontSize: 14.0, color: Colors.grey),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2.0),
                       ),
                     ),
                     controller: usernameController,
@@ -321,18 +339,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     //   return null;
                     // },
                   ),
-                  SizedBox(height: height * 0.02),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5.0, top: 30.0),
+                    child: Text(
+                      'ایمیل',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: secondaryHeaderColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   TextFormField(
                     controller: emailController,
                     decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(18.0),
                       prefixIcon: Icon(Icons.email_rounded),
-                      labelText: 'ایمیل',
-                      alignLabelWithHint: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      hintText: 'مثلا : alireza@gmail.com',
+                      hintStyle: TextStyle(fontSize: 14.0, color: Colors.grey),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2.0),
                       ),
                     ),
+
                     // The validator receives the text that the user has entered.
                     // validator: (value) {
                     //   if (value == null || value.isEmpty) {
@@ -343,12 +371,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     //   return null;
                     // },
                   ),
-                  SizedBox(height: height * 0.02),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5.0, top: 30.0),
+                    child: Text(
+                      'گذرواژه',
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: secondaryHeaderColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   TextFormField(
                     controller: passwordController,
                     obscureText: _isObscure,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(18.0),
                       prefixIcon: const Icon(Icons.lock_open),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -360,9 +397,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           });
                         },
                       ),
-                      labelText: 'گذرواژه',
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      hintText: 'مثلا : alireza1234',
+                      hintStyle:
+                          const TextStyle(fontSize: 14.0, color: Colors.grey),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2.0),
                       ),
                     ),
                     // The validator receives the text that the user has entered.
@@ -382,14 +421,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   LargeBtn(
                     primaryColor: primaryColor,
                     formKey: _formKey,
-                    title: 'ذخیره',
+                    child: const Text('ذخیره'),
                     onPressed: () {
                       if (_image == null) {
                         BlocProvider.of<ChangeProfileCubit>(context)
-                            .changeProfileImageEvent(
+                            .changeUserInfoEvent(
                                 'assets/images/profile.svg');
                       } else {
-                        saveImage(_image!.path);
+                        saveUserInfo(_image!.path);
                       }
                       // Validate returns true if the form is valid, or false otherwise.
                       if (_formKey.currentState!.validate()) {
@@ -404,6 +443,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  // user log out
+  void doUserLogout() async {
+    final user = await ParseUser.currentUser() as ParseUser;
+    // final user = ParseUser(email, password, null);
+    var response = await user.logout();
+    print(user);
+    print(response);
+
+    if (response.success) {
+      // Is show auth screens
+      PrefsOperator prefsOperator = locator<PrefsOperator>();
+      prefsOperator.changeAuthState(true);
+      print('ok');
+    } else {
+      print('خطا');
+    }
   }
 
   // change image profile
@@ -434,11 +491,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String? _imagePath;
-  Future<void> saveImage(String path) async {
+  Future<void> saveUserInfo(String imagePath) async {
     SharedPreferences sharedPreferences = locator<SharedPreferences>();
-    sharedPreferences.setString('imagePath', path);
+    sharedPreferences.setString('imagePath', imagePath);
 
-    BlocProvider.of<ChangeProfileCubit>(context).changeProfileImageEvent(path);
+    // final username = usernameController.text.trim();
+    // final email = emailController.text.trim();
+    // final password = passwordController.text.trim();
+    
+    // print(username);
+
+    // PrefsOperator prefsOperator = locator<PrefsOperator>();
+    // prefsOperator.setUserInfo(imagePath,username, email, password);
+
+    // BlocProvider.of<ChangeProfileCubit>(context).changeUserInfoEvent(path);
   }
 
   Future<void> loadImage() async {

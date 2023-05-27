@@ -3,23 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'package:quiz_online/common/prefs/prefs_operator.dart';
 import 'package:quiz_online/common/widgets/large_btn.dart';
-import 'package:quiz_online/common/widgets/main_wrapper.dart';
-import 'package:quiz_online/features/feature_auth/presentation/screens/reset_password_screen.dart';
-import 'package:quiz_online/features/feature_auth/presentation/screens/sign_up_screen.dart';
-import 'package:quiz_online/locator.dart';
+import 'package:quiz_online/features/feature_auth/presentation/screens/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const String routeName = '/login_screen';
+class ResetPasswordScreen extends StatefulWidget {
+  static const String routeName = '/reset_password_screen';
 
-  const LoginScreen({super.key});
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -106,60 +102,58 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(height: height * 0.02),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: _isObscure,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(18.0),
-                        prefixIcon: const Icon(Icons.lock_open),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isObscure
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isObscure = !_isObscure;
-                            });
-                          },
-                        ),
-                        labelText: 'گذرواژه',
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'لطفا گذرواژه خود را وارد کنید.';
-                        } else if (value.length < 8) {
-                          return 'حداقل 8 کاراکتر وارد کنید.';
-                        } else if (value.length > 20) {
-                          return 'حداکثر 20 کاراکتر وارد کنید.';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: height * 0.015),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacementNamed(
-                            context, ResetPasswordScreen.routeName);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 5.0),
-                        child: Text(
-                          'رمز عبور خود را فراموش کرده اید؟',
-                          style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // SizedBox(height: height * 0.02),
+                    // TextFormField(
+                    //   controller: passwordController,
+                    //   obscureText: _isObscure,
+                    //   decoration: InputDecoration(
+                    //     contentPadding: const EdgeInsets.all(18.0),
+                    //     prefixIcon: const Icon(Icons.lock_open),
+                    //     suffixIcon: IconButton(
+                    //       icon: Icon(
+                    //         _isObscure
+                    //             ? Icons.visibility
+                    //             : Icons.visibility_off,
+                    //       ),
+                    //       onPressed: () {
+                    //         setState(() {
+                    //           _isObscure = !_isObscure;
+                    //         });
+                    //       },
+                    //     ),
+                    //     labelText: 'گذرواژه',
+                    //     border: const OutlineInputBorder(
+                    //       borderRadius: BorderRadius.all(Radius.circular(15)),
+                    //     ),
+                    //   ),
+                    //   // The validator receives the text that the user has entered.
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'لطفا گذرواژه خود را وارد کنید.';
+                    //     } else if (value.length < 8) {
+                    //       return 'حداقل 8 کاراکتر وارد کنید.';
+                    //     } else if (value.length > 20) {
+                    //       return 'حداکثر 20 کاراکتر وارد کنید.';
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
+                    // SizedBox(height: height * 0.015),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //   },
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(right: 5.0),
+                    //     child: Text(
+                    //       'رمز عبور خود را فراموش کرده اید؟',
+                    //       style: TextStyle(
+                    //         color: primaryColor,
+                    //         fontSize: 12.0,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: height * 0.03),
                     //
                     LargeBtn(
@@ -169,13 +163,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                          : const Text('ورود'),
+                          : const Text('ارسال'),
                       onPressed: () {
                         // Validate returns true if the form is valid, or false otherwise.
                         if (_formKey.currentState!.validate()) {
                           // userProvider.callRegisterApi(nameController.text, emailController.text, passwordController.text);
                           setState(() => isLoading = true);
-                          doUserLogin();
+                          doUserResetPassword();
                         }
                       },
                     ),
@@ -184,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'هنوز در آزمون آنلاین ثبت نام نکرده اید؟',
+                          'رمز عبورتان را به خاطر آوردید؟',
                           style: textTheme.labelMedium,
                         ),
                         const SizedBox(width: 10.0),
@@ -198,9 +192,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () {
                             Navigator.pushReplacementNamed(
-                                context, SignUpScreen.routeName);
+                                context, LoginScreen.routeName);
                           },
-                          child: const Text('ثبت نام'),
+                          child: const Text('ورود'),
                         ),
                       ],
                     ),
@@ -214,17 +208,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // user login
-  void doUserLogin() async {
-    // final username = usernameController.text.trim();
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+  // user reset password
+  void doUserResetPassword() async {
+    final ParseUser user = ParseUser(null, null, emailController.text.trim());
+    final ParseResponse parseResponse = await user.requestPasswordReset();
+    if (parseResponse.success) {
+      setState(() => isLoading = false);
 
-    final user = ParseUser(email, password, null);
-
-    var response = await user.login();
-
-    if (response.success) {
       final snackBar = SnackBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -235,27 +225,15 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(15.0),
           ),
           child: const ListTile(
-            leading: Icon(Icons.done_rounded, color: Colors.white),
+            leading: Icon(Icons.close_rounded, color: Colors.white),
             title: Text(
-              'ورود شما با موفقیت انجام شد.',
+              'ایمیل بازیابی رمز عبور برای شما شد.',
               style: TextStyle(color: Colors.white),
             ),
           ),
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      // Is show auth screens
-      PrefsOperator prefsOperator = locator<PrefsOperator>();
-      prefsOperator.changeAuthState(false);
-
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          MainWrapper.routeName,
-          ModalRoute.withName('/main_wrapper'),
-        );
-      });
     } else {
       setState(() => isLoading = false);
 
@@ -271,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: const ListTile(
             leading: Icon(Icons.close_rounded, color: Colors.white),
             title: Text(
-              'ورود شما با مشکل مواجه شد ، لطفا دوباره امتحان کنید.',
+              'ارسال ایمیل بازیابی با مشکل مواجه شد ، لطفا دوباره امتحان کنید.',
               style: TextStyle(color: Colors.white),
             ),
           ),

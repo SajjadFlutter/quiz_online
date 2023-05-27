@@ -25,7 +25,7 @@ class IntroPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: height * 0.12),
+          SizedBox(height: height * 0.15),
           // image
           Center(
             child: DelayedWidget(
@@ -62,7 +62,7 @@ class IntroPage extends StatelessWidget {
               child: Text(
                 description,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16.0),
+                style: const TextStyle(fontSize: 14.0),
               ),
             ),
           ),
