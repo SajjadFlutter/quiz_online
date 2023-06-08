@@ -14,7 +14,7 @@ class QuizTitleWidget extends StatelessWidget {
     return RichText(
       text: TextSpan(
         text: QuizScreen.quizTitle,
-        style: textTheme.titleMedium,
+        style: textTheme.labelLarge,
         children: <TextSpan>[
           TextSpan(text: ' (داخلی)', style: textTheme.bodyMedium),
         ],

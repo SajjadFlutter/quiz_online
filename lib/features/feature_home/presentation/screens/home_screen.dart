@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
-import 'package:quiz_online/common/bloc/profile_image_cubit/change_profile_cubit.dart';
+import 'package:quiz_online/common/bloc/user_info_cubit/changle_profile_image_cubit.dart';
+import 'package:quiz_online/common/widgets/bottom_nav.dart';
 import 'package:quiz_online/common/widgets/title_widget.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_type_cubit.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_year_cubit.dart';
@@ -18,6 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   static const String routeName = '/home_screen';
+  final PageController pageController = PageController();
+
   HomeScreen({super.key});
 
   final List<int> konkurYears = [1401, 1400, 1399];
@@ -45,127 +48,133 @@ class HomeScreen extends StatelessWidget {
       SharedPreferences sharedPreferences = locator<SharedPreferences>();
 
       sharedPreferences.getString('imagePath') != null
-          ? BlocProvider.of<ChangeProfileCubit>(context)
-              .changeUserInfoEvent(sharedPreferences.getString('imagePath'))
+          ? BlocProvider.of<ChangeProfileImageCubit>(context)
+              .changeUserInfoEvent(sharedPreferences.getString('imagePath')!)
           : null;
 
-      return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+      return Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 46.0,
-                        height: 46.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100.0),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100.0),
-                          child: BlocBuilder<ChangeProfileCubit, String>(
-                            builder: (context, state) {
-                              if (state == 'assets/images/profile.svg') {
-                                return SvgPicture.asset(
-                                  state,
-                                  fit: BoxFit.cover,
-                                  color: Colors.grey.shade400,
-                                );
-                              } else {
-                                return Image.file(File(state),
-                                    fit: BoxFit.cover);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                'سلام ${sharedPreferences.getString('username')}',
-                                style: textTheme.titleMedium,
+                          Container(
+                            width: 46.0,
+                            height: 46.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100.0),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100.0),
+                              child:
+                                  BlocBuilder<ChangeProfileImageCubit, String>(
+                                builder: (context, state) {
+                                  if (state == 'assets/images/profile.svg') {
+                                    return SvgPicture.asset(
+                                      state,
+                                      fit: BoxFit.cover,
+                                      color: Colors.grey.shade400,
+                                    );
+                                  } else {
+                                    return Image.file(File(state),
+                                        fit: BoxFit.cover);
+                                  }
+                                },
                               ),
-                              const SizedBox(width: 6.0),
-                              Image.asset(
-                                'assets/images/hand_emoji.png',
-                                width: 17.0,
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'سلام ${sharedPreferences.getString('username')}',
+                                    style: textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(width: 6.0),
+                                  Image.asset(
+                                    'assets/images/hand_emoji.png',
+                                    width: 17.0,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 1.0),
+                              Text(
+                                'روز خوبی داشته باشی',
+                                style: textTheme.bodyMedium,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 1.0),
-                          Text(
-                            'روز خوبی داشته باشی',
-                            style: textTheme.bodyMedium,
-                          ),
                         ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 15.0),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Text(
+                          DateTime.now().toPersianDateStr(strMonth: true),
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontFamily: 'iransans',
+                            fontSize: 10.0,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Text(
-                      DateTime.now().toPersianDateStr(strMonth: true),
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontFamily: 'iransans',
-                        fontSize: 10.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
 
-            const SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
 
-            const TitleWidget(title: 'آزمون های در دسترس'),
+                const TitleWidget(title: 'آزمون های در دسترس'),
 
-            // categories
-            const SizedBox(height: 20.0),
-            CategoryBox(
-              height: height,
-              image: 'assets/images/riyazi.svg',
-              title: 'ریاضی',
-              onTap: () {
-                homeBottomSheet(
-                    context, height, width, defualtIndex, categoryList[0]);
-              },
+                // categories
+                const SizedBox(height: 20.0),
+                CategoryBox(
+                  height: height,
+                  image: 'assets/images/riyazi.svg',
+                  title: 'ریاضی',
+                  onTap: () {
+                    homeBottomSheet(
+                        context, height, width, defualtIndex, categoryList[0]);
+                  },
+                ),
+                CategoryBox(
+                  height: height,
+                  image: 'assets/images/tajrobi.svg',
+                  title: 'علوم تجربی',
+                  onTap: () {
+                    homeBottomSheet(
+                        context, height, width, defualtIndex, categoryList[1]);
+                  },
+                ),
+                CategoryBox(
+                  height: height,
+                  image: 'assets/images/ensani.svg',
+                  title: 'علوم انسانی',
+                  onTap: () {
+                    homeBottomSheet(
+                        context, height, width, defualtIndex, categoryList[2]);
+                  },
+                ),
+                const SizedBox(height: 25.0),
+              ],
             ),
-            CategoryBox(
-              height: height,
-              image: 'assets/images/tajrobi.svg',
-              title: 'علوم تجربی',
-              onTap: () {
-                homeBottomSheet(
-                    context, height, width, defualtIndex, categoryList[1]);
-              },
-            ),
-            CategoryBox(
-              height: height,
-              image: 'assets/images/ensani.svg',
-              title: 'علوم انسانی',
-              onTap: () {
-                homeBottomSheet(
-                    context, height, width, defualtIndex, categoryList[2]);
-              },
-            ),
-            const SizedBox(height: 25.0),
-          ],
+          ),
         ),
+        bottomNavigationBar: BottomNav(controller: pageController),
       );
     });
   }
@@ -191,7 +200,7 @@ class HomeScreen extends StatelessWidget {
             BlocProvider(create: (context) => QuizYearCubit()),
           ],
           child: Container(
-            height: height * 0.38,
+            height: width > 500 ? height * 0.76 : height * 0.38,
             padding: const EdgeInsets.only(
                 top: 10.0, left: 20.0, bottom: 20.0, right: 20.0),
             decoration: const BoxDecoration(

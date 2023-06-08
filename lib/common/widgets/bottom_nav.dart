@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quiz_online/common/bloc/borrom_nav_cubit/change_index_cubit.dart';
+import 'package:quiz_online/common/page_route/animation_pages.dart';
+import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
+import 'package:quiz_online/features/feature_profile/presentation/screens/profile_screen.dart';
 
 class BottomNav extends StatelessWidget {
   final PageController controller;
@@ -69,10 +72,26 @@ class BottomNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // change index
+        // // change index
         BlocProvider.of<ChangeIndexCubit>(context).changeIndexEvent(index);
-        // go to Home Screen
-        controller.jumpToPage(index);
+        // // go to Home Screen
+        // controller.jumpToPage(index);
+
+        if (index == 0) {
+          Navigator.push(
+            context,
+            SlideDownPageRoute(
+              builder: (BuildContext context) => HomeScreen(),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            SlideDownPageRoute(
+              builder: (BuildContext context) => ProfileScreen(),
+            ),
+          );
+        }
       },
       child: Container(
         color: Colors.transparent,

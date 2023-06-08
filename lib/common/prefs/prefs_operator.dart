@@ -17,13 +17,13 @@ class PrefsOperator {
     return sharedPreferences.getBool('showIntro') ?? true;
   }
 
-  // for user authentication
-  changeAuthState(bool value) {
-    sharedPreferences.setBool('showAuth', value);
+  // for user SetProfileentication
+  changeSetProfileState(bool value) {
+    sharedPreferences.setBool('showSetProfile', value);
   }
 
-  Future<bool> getAuthState() async {
-    return sharedPreferences.getBool('showAuth') ?? true;
+  Future<bool> getSetProfileState() async {
+    return sharedPreferences.getBool('showSetProfile') ?? true;
   }
 
   // set user info

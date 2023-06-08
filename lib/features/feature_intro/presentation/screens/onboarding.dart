@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_online/common/prefs/prefs_operator.dart';
-import 'package:quiz_online/features/feature_auth/presentation/screens/sign_up_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/bloc/intro_cubit/intro_cubit.dart';
+import 'package:quiz_online/features/feature_intro/presentation/screens/set_profile_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/widgets/intro_btn.dart';
 import 'package:quiz_online/features/feature_intro/presentation/widgets/intro_page.dart';
 import 'package:quiz_online/locator.dart';
@@ -18,18 +18,19 @@ class OnboardingScreen extends StatelessWidget {
   final List<Widget> introPages = const [
     IntroPage(
       title: 'سلام رفیق!',
-      description:
-          'به آزمون آنلاین خوش اومدی!',
+      description: 'به آزمون آنلاین خوش اومدی!',
       image: "assets/images/intro_1.svg",
     ),
     IntroPage(
       title: 'داستان چیه؟',
-      description: 'اینجا میتونی خودت رو با آزمون های سال های قبل کنکور آماده کنی!',
+      description:
+          'اینجا میتونی خودت رو با آزمون های سال های قبل کنکور آماده کنی!',
       image: "assets/images/intro_2.svg",
     ),
     IntroPage(
       title: 'خب!',
-      description: 'حالا که فهمیدی داستان از چه قراره وقتشه که شروع کنی\nچیزی تا موفقیت نمونده!',
+      description:
+          'حالا که فهمیدی داستان از چه قراره وقتشه که شروع کنی\nچیزی تا موفقیت نمونده!',
       image: "assets/images/intro_3.svg",
     ),
   ];
@@ -105,7 +106,7 @@ class OnboardingScreen extends StatelessWidget {
 
                             Navigator.pushNamedAndRemoveUntil(
                               context,
-                              SignUpScreen.routeName,
+                              SetProfileScreen.routeName,
                               ModalRoute.withName('/signup_screen'),
                             );
                           },
