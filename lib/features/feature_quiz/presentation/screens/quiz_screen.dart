@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delayed_widget/delayed_widget.dart';
@@ -29,10 +29,9 @@ class QuizScreen extends StatefulWidget {
   static String quizTitle = '';
   static String categoryTitle = '';
 
-  static List<String> quizPercentages = [];
+  static List<String> numberQuestions = [];
 
-  // lessons list
-  static List<String> lossonsList = [];
+  static List<String> quizPercentages = [];
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -71,12 +70,13 @@ class _QuizScreenState extends State<QuizScreen> {
       ]);
     }
 
-    MyApp.changeColor(
+    MyApp.changeColor(Theme.of(context).scaffoldBackgroundColor,
         Theme.of(context).scaffoldBackgroundColor, Brightness.dark);
 
     return WillPopScope(
       onWillPop: () async {
-        MyApp.changeColor(Colors.transparent, Brightness.dark);
+        // MyApp.changeColor(
+        //     Colors.transparent, Colors.transparent, Brightness.dark);
 
         showDialog(
           useSafeArea: false,
@@ -108,15 +108,114 @@ class _QuizScreenState extends State<QuizScreen> {
         body: NestedScrollView(
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            // appbar
             SliverAppBar(
               floating: true,
               snap: true,
               title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.edit_note_rounded,
-                      color: primaryColor, size: 28.0),
-                  const SizedBox(width: 10.0),
-                  QuizTitleWidget(textTheme: textTheme),
+                  Row(
+                    children: [
+                      Icon(Icons.edit_note_rounded,
+                          color: primaryColor, size: 28.0),
+                      const SizedBox(width: 10.0),
+                      QuizTitleWidget(textTheme: textTheme),
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.info_outline_rounded,
+                      color: Colors.grey.shade800,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            title: QuizTitleWidget(textTheme: textTheme),
+                            content: SingleChildScrollView(
+                              child: Column(
+                                children: List.generate(
+                                  HomeScreen.lessonsList.length,
+                                  (index) {
+                                    print(HomeScreen.lessonsList.length);
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 20.0,
+                                                    height: 20.0,
+                                                    decoration: BoxDecoration(
+                                                      color: primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30.0),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.done_rounded,
+                                                      color: Colors.white,
+                                                      size: 14.0,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 15.0),
+                                                  Text(
+                                                    HomeScreen
+                                                        .lessonsList[index],
+                                                    style:
+                                                        textTheme.labelMedium,
+                                                  ),
+                                                ],
+                                              ),
+                                              Text(
+                                                '${QuizScreen.numberQuestions[index].toPersianDigit()} سوال',
+                                                style: TextStyle(
+                                                  color: primaryColor,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        index <
+                                                HomeScreen.lessonsList.length -
+                                                    1
+                                            ? const Divider()
+                                            : Container(),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'تایید',
+                                  style: TextStyle(
+                                      color: primaryColor, fontSize: 12.0),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -195,6 +294,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                 children: List.generate(
                                   questionModel.results!.length,
                                   (index) {
+                                    print(questionModel.results!.length);
                                     return Container(
                                       padding: const EdgeInsets.only(
                                         top: 10.0,
@@ -250,8 +350,8 @@ class _QuizScreenState extends State<QuizScreen> {
                                                 children: [
                                                   // حالت هیچدام
                                                   Padding(
-                                                    padding:
-                                                    const EdgeInsets.symmetric(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
                                                         horizontal: 20.0),
                                                     child: Row(
                                                       mainAxisAlignment:
@@ -283,7 +383,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                                             questionModel
                                                                 .results![index]
                                                                 .answer = 'هیچکدام';
-                                                  
+
                                                             BlocProvider.of<
                                                                         ChangeOptionIndexCubit>(
                                                                     context)
@@ -294,8 +394,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                                       ],
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                      height: 15.0),
+                                                  const SizedBox(height: 15.0),
                                                   // options
                                                   Row(
                                                     mainAxisAlignment:
@@ -358,25 +457,97 @@ class _QuizScreenState extends State<QuizScreen> {
 
                                   QuizScreen.quizPercentages.clear();
 
-                                  if (QuizScreen.categoryTitle == 'ریاضی') {
-                                    percentCalculator(questionModel, 0, 40);
-                                    percentCalculator(questionModel, 0, 40);
-                                    percentCalculator(questionModel, 0, 40);
-                                    // percentCalculator(questionModel, 40, 75);
-                                    // percentCalculator(questionModel, 75, 105);
-                                  }
+                                  // in 1399
+                                  if (HomeScreen.quizYear == 1399) {
+                                    if (QuizScreen.categoryTitle == 'ریاضی') {
+                                      percentCalculator(
+                                          questionModel, 0, 50); // ریاضیات
+                                      percentCalculator(
+                                          questionModel, 50, 90); // فیزیک
+                                      percentCalculator(
+                                          questionModel, 90, 120); // شیمی
+                                    }
 
-                                  if (QuizScreen.categoryTitle ==
-                                      'علوم انسانی') {
-                                    percentCalculator(questionModel, 0, 1);
-                                    percentCalculator(questionModel, 1, 2);
-                                    percentCalculator(questionModel, 2, 3);
-                                    percentCalculator(questionModel, 3, 4);
-                                    percentCalculator(questionModel, 4, 5);
-                                    percentCalculator(questionModel, 5, 6);
-                                    percentCalculator(questionModel, 6, 7);
-                                    percentCalculator(questionModel, 7, 8);
-                                    percentCalculator(questionModel, 8, 9);
+                                    if (QuizScreen.categoryTitle ==
+                                        'علوم تجربی') {
+                                      percentCalculator(
+                                          questionModel, 0, 30); // ریاضی
+                                      percentCalculator(
+                                          questionModel, 30, 80); // زیست شناسی
+                                      percentCalculator(
+                                          questionModel, 80, 110); // فیزیک
+                                      percentCalculator(
+                                          questionModel, 110, 145); // شیمی
+                                      percentCalculator(questionModel, 145,
+                                          165); // زمین شناسی
+                                    }
+
+                                    if (QuizScreen.categoryTitle ==
+                                        'علوم انسانی') {
+                                      percentCalculator(
+                                          questionModel, 0, 20); // ریاضی
+                                      percentCalculator(
+                                          questionModel, 20, 35); // اقتصاد
+                                      percentCalculator(questionModel, 35,
+                                          65); // زبان و ادبیات فارسی
+                                      percentCalculator(questionModel, 65,
+                                          85); // علوم اجتماعی
+                                      percentCalculator(
+                                          questionModel, 85, 105); // زبان عربی
+                                      percentCalculator(
+                                          questionModel, 105, 120); // تاریخ
+                                      percentCalculator(
+                                          questionModel, 120, 135); // جغرافیا
+                                      percentCalculator(questionModel, 135,
+                                          155); // فلسفه و منطق
+                                      percentCalculator(questionModel, 155,
+                                          175); // روان شناسی
+                                    }
+                                  } else {
+                                    if (QuizScreen.categoryTitle == 'ریاضی') {
+                                      percentCalculator(
+                                          questionModel, 0, 40); // ریاضیات
+                                      percentCalculator(
+                                          questionModel, 40, 75); // فیزیک
+                                      percentCalculator(
+                                          questionModel, 75, 105); // شیمی
+                                    }
+
+                                    if (QuizScreen.categoryTitle ==
+                                        'علوم تجربی') {
+                                      percentCalculator(
+                                          questionModel, 0, 45); // زیست شناسی
+                                      percentCalculator(
+                                          questionModel, 45, 75); // فیزیک
+                                      percentCalculator(
+                                          questionModel, 75, 110); // شیمی
+                                      percentCalculator(
+                                          questionModel, 110, 140); // ریاضی
+                                      percentCalculator(questionModel, 140,
+                                          155); // زمین شناسی
+                                    }
+
+                                    if (QuizScreen.categoryTitle ==
+                                        'علوم انسانی') {
+                                      percentCalculator(
+                                          questionModel, 0, 20); // ریاضی
+                                      percentCalculator(questionModel, 20,
+                                          50); // زبان و ادبیات فارسی
+                                      percentCalculator(questionModel, 50,
+                                          65); // علوم اجتماعی
+                                      percentCalculator(
+                                          questionModel, 65, 80); // روان شناسی
+                                      percentCalculator(
+                                          questionModel, 80, 100); // زبان عربی
+                                      percentCalculator(
+                                          questionModel, 100, 113); // تاریخ
+                                      percentCalculator(
+                                          questionModel, 113, 125); // جغرافیا
+                                      percentCalculator(questionModel, 125,
+                                          145); // فلسفه و منطق
+                                      percentCalculator(
+                                          questionModel, 145, 160); // اقتصاد
+                                    }
                                   }
 
                                   // add quiz to database for profile screen
@@ -385,6 +556,9 @@ class _QuizScreenState extends State<QuizScreen> {
                                       title: QuizScreen.quizTitle,
                                       date: DateTime.now()
                                           .toPersianDateStr(strMonth: true),
+                                      quizLessons: HomeScreen.lessonsList,
+                                      quizPercentages:
+                                          QuizScreen.quizPercentages,
                                     ),
                                   );
 

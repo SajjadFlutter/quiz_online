@@ -40,8 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // var cardColor = Theme.of(context).cardColor;
     var textTheme = Theme.of(context).textTheme;
 
-    MyApp.changeColor(
-        Theme.of(context).scaffoldBackgroundColor, Brightness.dark);
+    MyApp.changeColor(Colors.transparent, Colors.transparent, Brightness.dark);
 
     return Scaffold(
       body: Container(
@@ -58,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 children: [
                   SvgPicture.asset(
                     'assets/images/logo_icon.svg',
-                    width: 125.0,
+                    width: 130.0,
                     color: primaryColor,
                   ),
                   const SizedBox(height: 15.0),

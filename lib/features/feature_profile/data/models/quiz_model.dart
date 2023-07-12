@@ -9,12 +9,18 @@ class QuizModel {
   @HiveField(1)
   String? date;
   @HiveField(2)
-  String? time;
+  List? quizLessons;
   @HiveField(3)
+  List? quizPercentages;
+  @HiveField(4)
+  String? time;
+  @HiveField(5)
   String? type;
 
   QuizModel({
     required this.title,
     required this.date,
+    required this.quizPercentages,
+    required this.quizLessons,
   });
 }

@@ -11,8 +11,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:quiz_online/common/bloc/user_info_cubit/change_username_cubit.dart';
 import 'package:quiz_online/common/bloc/user_info_cubit/changle_profile_image_cubit.dart';
 import 'package:quiz_online/common/widgets/custom_appbar.dart';
+import 'package:quiz_online/common/widgets/custom_dialog_2.dart';
 import 'package:quiz_online/common/widgets/large_btn.dart';
 import 'package:quiz_online/locator.dart';
+import 'package:quiz_online/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -31,6 +33,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   final _formKey = GlobalKey<FormState>();
   // bool _isObscure = true;
+  bool isChangeProfile = false;
+  bool isDelete = false;
 
   @override
   void dispose() {
@@ -53,6 +57,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MyApp.changeColor(Colors.transparent,
+        Theme.of(context).scaffoldBackgroundColor, Brightness.dark);
     // get divice size
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -64,194 +70,226 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              children: [
-                // appbar
-                CustomAppbar(
-                  width: width,
-                  secondaryHeaderColor: secondaryHeaderColor,
-                  textTheme: textTheme,
-                  title: 'تنظیمات',
-                  iconData: Icons.arrow_back_rounded,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const SizedBox(height: 35.0),
+            // appbar
+            CustomAppbar(
+              width: width,
+              secondaryHeaderColor: secondaryHeaderColor,
+              textTheme: textTheme,
+              title: 'تنظیمات',
+              iconData: Icons.arrow_back_rounded,
+              onPressed: () {
+                if (usernameController.text !=
+                    sharedPreferences.getString('username')) {
+                  isChangeProfile = true;
+                }
+                if (isChangeProfile) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => CustomDialog2(
+                      textTheme: textTheme,
+                      primaryColor: primaryColor,
+                      title: 'آیا مایلید تغییرات ذخیره شود؟',
+                      action: () {
+                        if (_formKey.currentState!.validate()) {
+                          // userProvider.callRegisterApi(nameController.text, emailController.text, passwordController.text);
+                          if (_image == null) {
+                            BlocProvider.of<ChangeProfileImageCubit>(context)
+                                .changeUserInfoEvent(
+                                    'assets/images/profile.svg');
+                          } else {
+                            saveImage(_image!.path);
+                          }
 
-                // image profile
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: height * 0.25,
-                          padding: const EdgeInsets.only(
-                              top: 10.0, left: 20.0, bottom: 20.0, right: 20.0),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          saveUserInfo(
+                            usernameController.text.trim(),
+                          );
+                        }
+
+                        isChangeProfile = false;
+
+                        if (isDelete) {
+                          sharedPreferences.remove('imagePath');
+                        }
+
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+            const SizedBox(height: 35.0),
+
+            // image profile
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  backgroundColor: Colors.transparent,
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      height: height * 0.25,
+                      padding: const EdgeInsets.only(
+                          top: 10.0, left: 20.0, bottom: 20.0, right: 20.0),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
                             children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 25.0,
-                                    height: 5.0,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 25.0),
-                                  Text(
-                                    'تغییر تصویر پروفایل',
-                                    style: textTheme.labelLarge,
-                                  ),
-                                  const SizedBox(height: 20.0),
-                                ],
+                              Container(
+                                width: 25.0,
+                                height: 5.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () =>
-                                        _pickImage(ImageSource.gallery),
-                                    child: Container(
-                                      width: 90.0,
-                                      height: 90.0,
-                                      decoration: BoxDecoration(
-                                        color: primaryColor.withOpacity(0.15),
-                                        borderRadius:
-                                            BorderRadius.circular(18.0),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.add_photo_alternate_outlined,
-                                            size: 30.0,
-                                            color: primaryColor,
-                                          ),
-                                          const SizedBox(height: 6.0),
-                                          Text(
-                                            'از گالری',
-                                            style: TextStyle(
-                                              color: primaryColor,
-                                              fontSize: 11.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: _imagePath == null ? 40.0 : 20.0),
-                                  GestureDetector(
-                                    onTap: () => _pickImage(ImageSource.camera),
-                                    child: Container(
-                                      width: 90.0,
-                                      height: 90.0,
-                                      decoration: BoxDecoration(
-                                        color: primaryColor.withOpacity(0.15),
-                                        borderRadius:
-                                            BorderRadius.circular(18.0),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Transform(
-                                            alignment: Alignment.center,
-                                            transform: Matrix4.rotationY(110.0),
-                                            child: Icon(
-                                              Icons.add_a_photo_outlined,
-                                              size: 30.0,
-                                              color: primaryColor,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6.0),
-                                          Text(
-                                            'از دوربین',
-                                            style: TextStyle(
-                                              color: primaryColor,
-                                              fontSize: 11.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: _imagePath == null ? false : true,
-                                    child: Row(
-                                      children: [
-                                        const SizedBox(width: 20.0),
-                                        GestureDetector(
-                                          onTap: () => deleteImage(),
-                                          child: Container(
-                                            width: 90.0,
-                                            height: 90.0,
-                                            decoration: BoxDecoration(
-                                              color: Colors.redAccent
-                                                  .withOpacity(0.15),
-                                              borderRadius:
-                                                  BorderRadius.circular(18.0),
-                                            ),
-                                            child: const Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  CupertinoIcons.delete,
-                                                  size: 26.0,
-                                                  color: Colors.redAccent,
-                                                ),
-                                                SizedBox(height: 10.0),
-                                                Text(
-                                                  'حذف',
-                                                  style: TextStyle(
-                                                    color: Colors.redAccent,
-                                                    fontSize: 11.0,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(height: 25.0),
+                              Text(
+                                'تغییر تصویر پروفایل',
+                                style: textTheme.labelLarge,
                               ),
-                              const SizedBox(height: 10.0),
+                              const SizedBox(height: 20.0),
                             ],
                           ),
-                        );
-                      },
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () => _pickImage(ImageSource.gallery),
+                                child: Container(
+                                  width: 90.0,
+                                  height: 90.0,
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add_photo_alternate_outlined,
+                                        size: 30.0,
+                                        color: primaryColor,
+                                      ),
+                                      const SizedBox(height: 6.0),
+                                      Text(
+                                        'از گالری',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontSize: 11.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: _imagePath == null ? 40.0 : 20.0),
+                              GestureDetector(
+                                onTap: () => _pickImage(ImageSource.camera),
+                                child: Container(
+                                  width: 90.0,
+                                  height: 90.0,
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Transform(
+                                        alignment: Alignment.center,
+                                        transform: Matrix4.rotationY(110.0),
+                                        child: Icon(
+                                          Icons.add_a_photo_outlined,
+                                          size: 30.0,
+                                          color: primaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6.0),
+                                      Text(
+                                        'از دوربین',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontSize: 11.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: _imagePath == null ? false : true,
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 20.0),
+                                    GestureDetector(
+                                      onTap: () => deleteImage(),
+                                      child: Container(
+                                        width: 90.0,
+                                        height: 90.0,
+                                        decoration: BoxDecoration(
+                                          color: Colors.redAccent
+                                              .withOpacity(0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(18.0),
+                                        ),
+                                        child: const Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              CupertinoIcons.delete,
+                                              size: 26.0,
+                                              color: Colors.redAccent,
+                                            ),
+                                            SizedBox(height: 10.0),
+                                            Text(
+                                              'حذف',
+                                              style: TextStyle(
+                                                color: Colors.redAccent,
+                                                fontSize: 11.0,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10.0),
+                        ],
+                      ),
                     );
                   },
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 100.0,
-                        height: 100.0,
-                        padding: const EdgeInsets.all(4.0),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(100.0),
-                        ),
-                        child: ClipRRect(
+                );
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    width: 100.0,
+                    height: 100.0,
+                    padding: const EdgeInsets.all(4.0),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(100.0),
+                    ),
+                    child: BlocBuilder<ChangeProfileImageCubit, String>(
+                      builder: (context, state) {
+                        return ClipRRect(
                           borderRadius: BorderRadius.circular(100.0),
                           child: _imagePath != null
                               ? Image.file(File(_imagePath!), fit: BoxFit.cover)
@@ -263,162 +301,164 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       fit: BoxFit.cover,
                                       color: Colors.grey.shade400,
                                     ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 3.0,
-                        bottom: 0.0,
-                        child: Container(
-                          width: 38.0,
-                          height: 38.0,
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(30.0),
-                            border: Border.all(color: Colors.white, width: 3.0),
-                          ),
-                          child: const Icon(
-                            Icons.mode_edit_rounded,
-                            color: Colors.white,
-                            size: 20.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 35.0),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 5.0),
-                          child: Text(
-                            'نام کاربری',
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              color: secondaryHeaderColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        TextFormField(
-                          style: textTheme.labelLarge,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.person, color: primaryColor),
-                            hintText: 'مثلا : علیرضا محمدی',
-                            hintStyle: const TextStyle(
-                                fontSize: 13.0, color: Colors.grey),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.blue, width: 2.0),
-                            ),
-                          ),
-                          controller: usernameController,
-                          // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'لطفا یک نام کاربری برای خود انتخاب کنید.';
-                            }
-                            return null;
-                          },
-                        ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(right: 5.0, top: 30.0),
-                        //   child: Text(
-                        //     'ایمیل',
-                        //     style: TextStyle(
-                        //       fontSize: 12.0,
-                        //       color: secondaryHeaderColor,
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        // ),
-                        // TextFormField(
-                        //   controller: emailController,
-                        //   decoration: const InputDecoration(
-                        //     prefixIcon: Icon(Icons.email_rounded),
-                        //     hintText: 'مثلا : alireza@gmail.com',
-                        //     hintStyle:
-                        //         TextStyle(fontSize: 14.0, color: Colors.grey),
-                        //     focusedBorder: UnderlineInputBorder(
-                        //       borderSide:
-                        //           BorderSide(color: Colors.blue, width: 2.0),
-                        //     ),
-                        //   ),
-                        //
-                        //   // The validator receives the text that the user has entered.
-                        //   // validator: (value) {
-                        //   //   if (value == null || value.isEmpty) {
-                        //   //     return 'لطفا ایمیل خود را وارد کنید.';
-                        //   //   } else if (!value.endsWith('@gmail.com')) {
-                        //   //     return 'لطفا یک ایمیل با پسوند @gmail.com وارد کنید.';
-                        //   //   }
-                        //   //   return null;
-                        //   // },
-                        // ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(right: 5.0, top: 30.0),
-                        //   child: Text(
-                        //     'گذرواژه',
-                        //     style: TextStyle(
-                        //       fontSize: 12.0,
-                        //       color: secondaryHeaderColor,
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        // ),
-                        // TextFormField(
-                        //   controller: passwordController,
-                        //   obscureText: _isObscure,
-                        //   decoration: InputDecoration(
-                        //     prefixIcon: const Icon(Icons.lock_open),
-                        //     suffixIcon: IconButton(
-                        //       icon: Icon(
-                        //         _isObscure
-                        //             ? Icons.visibility
-                        //             : Icons.visibility_off,
-                        //       ),
-                        //       onPressed: () {
-                        //         setState(() {
-                        //           _isObscure = !_isObscure;
-                        //         });
-                        //       },
-                        //     ),
-                        //     hintText: 'مثلا : alireza1234',
-                        //     hintStyle: const TextStyle(
-                        //         fontSize: 14.0, color: Colors.grey),
-                        //     focusedBorder: const UnderlineInputBorder(
-                        //       borderSide:
-                        //           BorderSide(color: Colors.blue, width: 2.0),
-                        //     ),
-                        //   ),
-                        //   // The validator receives the text that the user has entered.
-                        //   // validator: (value) {
-                        //   //   if (value == null || value.isEmpty) {
-                        //   //     return 'لطفا گذرواژه خود را وارد کنید.';
-                        //   //   } else if (value.length < 8) {
-                        //   //     return 'حداقل 8 کاراکتر وارد کنید.';
-                        //   //   } else if (value.length > 20) {
-                        //   //     return 'حداکثر 20 کاراکتر وارد کنید.';
-                        //   //   }
-                        //   //   return null;
-                        //   // },
-                        // ),
-                        // SizedBox(height: height * 0.05),
-                        //
-                      ],
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    right: 3.0,
+                    bottom: 0.0,
+                    child: Container(
+                      width: 38.0,
+                      height: 38.0,
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(30.0),
+                        border: Border.all(color: Colors.white, width: 3.0),
+                      ),
+                      child: const Icon(
+                        Icons.mode_edit_rounded,
+                        color: Colors.white,
+                        size: 20.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
+
+            const SizedBox(height: 35.0),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: Text(
+                        'نام کاربری',
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: secondaryHeaderColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    TextFormField(
+                      style: textTheme.labelLarge,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person, color: primaryColor),
+                        hintText: 'مثلا : علیرضا محمدی',
+                        hintStyle:
+                            const TextStyle(fontSize: 13.0, color: Colors.grey),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.blue, width: 2.0),
+                        ),
+                      ),
+                      controller: usernameController,
+                      // The validator receives the text that the user has entered.
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'لطفا یک نام کاربری برای خود انتخاب کنید.';
+                        }
+                        return null;
+                      },
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(right: 5.0, top: 30.0),
+                    //   child: Text(
+                    //     'ایمیل',
+                    //     style: TextStyle(
+                    //       fontSize: 12.0,
+                    //       color: secondaryHeaderColor,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+                    // TextFormField(
+                    //   controller: emailController,
+                    //   decoration: const InputDecoration(
+                    //     prefixIcon: Icon(Icons.email_rounded),
+                    //     hintText: 'مثلا : alireza@gmail.com',
+                    //     hintStyle:
+                    //         TextStyle(fontSize: 14.0, color: Colors.grey),
+                    //     focusedBorder: UnderlineInputBorder(
+                    //       borderSide:
+                    //           BorderSide(color: Colors.blue, width: 2.0),
+                    //     ),
+                    //   ),
+                    //
+                    //   // The validator receives the text that the user has entered.
+                    //   // validator: (value) {
+                    //   //   if (value == null || value.isEmpty) {
+                    //   //     return 'لطفا ایمیل خود را وارد کنید.';
+                    //   //   } else if (!value.endsWith('@gmail.com')) {
+                    //   //     return 'لطفا یک ایمیل با پسوند @gmail.com وارد کنید.';
+                    //   //   }
+                    //   //   return null;
+                    //   // },
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(right: 5.0, top: 30.0),
+                    //   child: Text(
+                    //     'گذرواژه',
+                    //     style: TextStyle(
+                    //       fontSize: 12.0,
+                    //       color: secondaryHeaderColor,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+                    // TextFormField(
+                    //   controller: passwordController,
+                    //   obscureText: _isObscure,
+                    //   decoration: InputDecoration(
+                    //     prefixIcon: const Icon(Icons.lock_open),
+                    //     suffixIcon: IconButton(
+                    //       icon: Icon(
+                    //         _isObscure
+                    //             ? Icons.visibility
+                    //             : Icons.visibility_off,
+                    //       ),
+                    //       onPressed: () {
+                    //         setState(() {
+                    //           _isObscure = !_isObscure;
+                    //         });
+                    //       },
+                    //     ),
+                    //     hintText: 'مثلا : alireza1234',
+                    //     hintStyle: const TextStyle(
+                    //         fontSize: 14.0, color: Colors.grey),
+                    //     focusedBorder: const UnderlineInputBorder(
+                    //       borderSide:
+                    //           BorderSide(color: Colors.blue, width: 2.0),
+                    //     ),
+                    //   ),
+                    //   // The validator receives the text that the user has entered.
+                    //   // validator: (value) {
+                    //   //   if (value == null || value.isEmpty) {
+                    //   //     return 'لطفا گذرواژه خود را وارد کنید.';
+                    //   //   } else if (value.length < 8) {
+                    //   //     return 'حداقل 8 کاراکتر وارد کنید.';
+                    //   //   } else if (value.length > 20) {
+                    //   //     return 'حداکثر 20 کاراکتر وارد کنید.';
+                    //   //   }
+                    //   //   return null;
+                    //   // },
+                    // ),
+                    // SizedBox(height: height * 0.05),
+                    //
+                  ],
+                ),
+              ),
+            ),
+
+            const Spacer(),
 
             // save btn
             Padding(
@@ -442,6 +482,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     saveUserInfo(
                       usernameController.text.trim(),
                     );
+
+                    isChangeProfile = false;
+
+                    if (isDelete) {
+                      sharedPreferences.remove('imagePath');
+                    }
                   }
                 },
               ),
@@ -480,14 +526,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       img = await _cropImage(imageFile: img);
 
       setState(() {
+        _image = null;
         _image = img;
+        isChangeProfile = true;
         Navigator.pop(context);
       });
     } on PlatformException {
       Navigator.pop(context);
     }
-
-    setState(() {});
   }
 
   // crop image
@@ -497,7 +543,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (croppedImage == null) {
       return null;
     } else {
-      setState(() {});
       return File(croppedImage.path);
     }
   }
@@ -505,6 +550,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _imagePath;
   Future<void> saveImage(String imagePath) async {
     SharedPreferences sharedPreferences = locator<SharedPreferences>();
+    sharedPreferences.setString('imagePath', imagePath);
     sharedPreferences.setString('imagePath', imagePath);
 
     BlocProvider.of<ChangeProfileImageCubit>(context)
@@ -527,8 +573,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> deleteImage() async {
-    SharedPreferences sharedPreferences = locator<SharedPreferences>();
-    sharedPreferences.remove('imagePath');
+    isDelete = true;
+    isChangeProfile = true;
 
     setState(() {
       _imagePath = null;

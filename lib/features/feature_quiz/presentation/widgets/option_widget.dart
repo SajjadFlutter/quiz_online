@@ -56,14 +56,14 @@ class OptionWidget extends StatelessWidget {
       child: Container(
         // margin: const EdgeInsets.all(8.0),
         width: width / 5,
-        height: 50.0,
+        height: 45.0,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color:
               questionModel.results![index].answer == optionsList[optionIndex]
                   ? primaryColor
-                  : primaryColor.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(12.0),
+                  : primaryColor.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: Text(
           optionsList[optionIndex].toPersianDigit(),

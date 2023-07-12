@@ -8,6 +8,7 @@ import 'package:quiz_online/common/bloc/borrom_nav_cubit/change_index_cubit.dart
 import 'package:quiz_online/common/bloc/user_info_cubit/change_username_cubit.dart';
 import 'package:quiz_online/common/bloc/user_info_cubit/changle_profile_image_cubit.dart';
 import 'package:quiz_online/config/my_theme.dart';
+import 'package:quiz_online/common/bloc/visible_cubit/visible_cubit.dart';
 import 'package:quiz_online/features/feature_home/presentation/screens/home_screen.dart';
 import 'package:quiz_online/features/feature_intro/presentation/bloc/splash_cubit/splash_cubit.dart';
 import 'package:quiz_online/features/feature_intro/presentation/screens/onboarding.dart';
@@ -19,6 +20,7 @@ import 'package:quiz_online/features/feature_profile/presentation/screens/settin
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/result_screen.dart';
 import 'package:quiz_online/locator.dart';
+import 'package:tapsell_plus/tapsell_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,11 @@ void main() async {
 
   await Parse().initialize(keyApplicationId, keyParseServerUrl,
       clientKey: keyClientKey, autoSendSessionId: true);
+
+  // Tapsell
+  const appId = "kbjipdajdmeifcprspgskcfqbsgrdsoimeendlkhfnoikdcphpjfpthojtdmqrihkkrico";
+  TapsellPlus.instance.initialize(appId);
+  TapsellPlus.instance.setGDPRConsent(true);
 
   // init locator
   await initLocator();
@@ -46,6 +53,7 @@ void main() async {
         BlocProvider(create: (_) => ChangeIndexCubit()),
         BlocProvider(create: (_) => ChangeProfileImageCubit()),
         BlocProvider(create: (_) => ChangeUsernameCubit()),
+        BlocProvider(create: (_) => VisibleCubit()),
       ],
       child: const MyApp(),
     ),
@@ -86,12 +94,16 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  static void changeColor(Color color, Brightness brightness) {
+  static void changeColor(
+    Color statusBarColor,
+    Color systemNavigationBarColor,
+    Brightness brightness,
+  ) {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        statusBarColor: color,
+        statusBarColor: statusBarColor,
         statusBarIconBrightness: brightness,
-        systemNavigationBarColor: color,
+        systemNavigationBarColor: systemNavigationBarColor,
         systemNavigationBarIconBrightness: brightness,
       ),
     );

@@ -107,7 +107,7 @@ class OnboardingScreen extends StatelessWidget {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
                               SetProfileScreen.routeName,
-                              ModalRoute.withName('/signup_screen'),
+                              ModalRoute.withName('/set_profile_screen'),
                             );
                           },
                         );

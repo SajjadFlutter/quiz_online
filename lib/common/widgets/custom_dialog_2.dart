@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
-class CustomDialog extends StatelessWidget {
-  const CustomDialog({
+class CustomDialog2 extends StatelessWidget {
+  const CustomDialog2({
     super.key,
     required this.textTheme,
     required this.primaryColor,
     required this.title,
-    required this.subTitle,
     required this.action,
   });
 
   final TextTheme textTheme;
   final Color primaryColor;
   final String title;
-  final String subTitle;
   final Function() action;
 
   @override
@@ -26,11 +24,6 @@ class CustomDialog extends StatelessWidget {
         title,
         style: textTheme.titleMedium,
       ),
-      content: Text(
-        textAlign: TextAlign.justify,
-        subTitle,
-        style: textTheme.labelMedium,
-      ),
       actions: [
         TextButton(
           onPressed: () {
@@ -38,14 +31,14 @@ class CustomDialog extends StatelessWidget {
           },
           child: Text(
             'لغو',
-            style: TextStyle(color: primaryColor,fontSize: 12.0),
+            style: TextStyle(color: primaryColor, fontSize: 12.0),
           ),
         ),
         TextButton(
           onPressed: action,
-          child:  Text(
+          child: Text(
             'تایید',
-            style: TextStyle(color: primaryColor,fontSize: 12.0),
+            style: TextStyle(color: primaryColor, fontSize: 12.0),
           ),
         ),
       ],

@@ -7,13 +7,13 @@ class QuizListLengthCubit extends Cubit<int> {
   QuizListLengthCubit() : super(0);
 
   void callQuizListLengthEvent() {
-    ProfileScreen.quizeList.clear();
+    ProfileScreen.quizesList.clear();
     Hive.box<QuizModel>('quizBox').values.forEach(
       (value) {
-        ProfileScreen.quizeList.add(value);
+        ProfileScreen.quizesList.add(value);
         // print(quizesList.length);
       },
     );
-    emit(ProfileScreen.quizeList.length);
+    emit(ProfileScreen.quizesList.length);
   }
 }

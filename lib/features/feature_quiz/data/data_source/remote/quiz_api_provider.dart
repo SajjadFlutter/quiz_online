@@ -27,16 +27,19 @@ class QuizApiProvider {
   // }
 
   dynamic callQuizData() async {
-    // print(className);
-    Response response = await dio.get(
-      'https://parseapi.back4app.com/classes/$className',
-      options: Options(
-        headers: {
-          'X-Parse-Application-Id': 'xul9v9enKgZxX7AziS31rjceue92DmJh8WVpZJvm',
-          'X-Parse-REST-API-Key': 'EPlLOxZxOKZpL3JMfrE2b0nAxfSRF2mCEd99eysF',
-        },
-      ),
-    );
+    Response response =
+        await dio.get('https://parseapi.back4app.com/classes/$className',
+            options: Options(
+              headers: {
+                'X-Parse-Application-Id':
+                    'xul9v9enKgZxX7AziS31rjceue92DmJh8WVpZJvm',
+                'X-Parse-REST-API-Key':
+                    'EPlLOxZxOKZpL3JMfrE2b0nAxfSRF2mCEd99eysF',
+              },
+            ),
+            queryParameters: {
+          'limit': 200,
+        });
     // print(response);
     return response;
   }

@@ -11,11 +11,14 @@ import 'package:quiz_online/common/widgets/bottom_nav.dart';
 import 'package:quiz_online/common/widgets/title_widget.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_type_cubit.dart';
 import 'package:quiz_online/features/feature_home/presentation/bloc/cubits/quiz_year_cubit.dart';
+import 'package:quiz_online/common/bloc/visible_cubit/visible_cubit.dart';
 import 'package:quiz_online/features/feature_home/presentation/widgets/category_box.dart';
 import 'package:quiz_online/features/feature_quiz/data/data_source/remote/quiz_api_provider.dart';
 import 'package:quiz_online/features/feature_quiz/presentation/screens/quiz_screen.dart';
 import 'package:quiz_online/locator.dart';
+import 'package:quiz_online/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tapsell_plus/tapsell_plus.dart';
 
 class HomeScreen extends StatelessWidget {
   static const String routeName = '/home_screen';
@@ -27,12 +30,49 @@ class HomeScreen extends StatelessWidget {
 
   static String quizType = 'داخلی';
   static int quizYear = 1401;
+  // lessons list
+  static List<String> lessonsList = [];
 
   // categories
   static List<String> categoryList = ['ریاضی', 'علوم تجربی', 'علوم انسانی'];
 
+  // تبلیغ
+  static String? tablighResponseId;
+  static String? tablighIconUrl;
+  static String? tablighTitle;
+
+  static bool isVisibleTabligh = true;
+
   @override
   Widget build(BuildContext context) {
+    MyApp.changeColor(Colors.transparent,
+        Theme.of(context).scaffoldBackgroundColor, Brightness.dark);
+
+    // تبلیغ
+    if (tablighResponseId == null ||
+        tablighIconUrl == null ||
+        tablighTitle == null) {
+      BlocProvider.of<VisibleCubit>(context).changeStateVisible(false);
+    } else {
+      BlocProvider.of<VisibleCubit>(context).changeStateVisible(true);
+    }
+
+    const zoneId = "648d67c6b3ead908e75fd64b";
+    TapsellPlus.instance.requestNativeAd(zoneId).then((responseId) {
+      // SAVE the responseId
+      TapsellPlus.instance.showNativeAd(responseId, onOpened: (nativeAd) {
+        // Use the NativeAd object to display an ad
+
+        tablighResponseId = nativeAd.responseId;
+        tablighIconUrl = nativeAd.iconUrl;
+        tablighTitle = nativeAd.title;
+      }, onError: (errorPayload) {
+        // Error when getting ad info
+      });
+    }).catchError((error) {
+      // Error requesting for an ad
+    });
+
     int defualtIndex = 0;
 
     // get divice size
@@ -41,7 +81,7 @@ class HomeScreen extends StatelessWidget {
 
     // theme
     var primaryColor = Theme.of(context).primaryColor;
-    // var cardColor = Theme.of(context).cardColor;
+    var cardColor = Theme.of(context).cardColor;
     var textTheme = Theme.of(context).textTheme;
 
     return Builder(builder: (context) {
@@ -53,125 +93,229 @@ class HomeScreen extends StatelessWidget {
           : null;
 
       return Scaffold(
+        extendBody: true,
         body: SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+          child: Stack(
+            children: [
+              // home screen widgets
+              SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: 46.0,
-                            height: 46.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100.0),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100.0),
-                              child:
-                                  BlocBuilder<ChangeProfileImageCubit, String>(
-                                builder: (context, state) {
-                                  if (state == 'assets/images/profile.svg') {
-                                    return SvgPicture.asset(
-                                      state,
-                                      fit: BoxFit.cover,
-                                      color: Colors.grey.shade400,
-                                    );
-                                  } else {
-                                    return Image.file(File(state),
-                                        fit: BoxFit.cover);
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'سلام ${sharedPreferences.getString('username')}',
-                                    style: textTheme.titleMedium,
+                              Container(
+                                width: 46.0,
+                                height: 46.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  child: BlocBuilder<ChangeProfileImageCubit,
+                                      String>(
+                                    builder: (context, state) {
+                                      if (state ==
+                                          'assets/images/profile.svg') {
+                                        return SvgPicture.asset(
+                                          state,
+                                          fit: BoxFit.cover,
+                                          color: Colors.grey.shade400,
+                                        );
+                                      } else {
+                                        return Image.file(File(state),
+                                            fit: BoxFit.cover);
+                                      }
+                                    },
                                   ),
-                                  const SizedBox(width: 6.0),
-                                  Image.asset(
-                                    'assets/images/hand_emoji.png',
-                                    width: 17.0,
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'سلام ${sharedPreferences.getString('username')}',
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      const SizedBox(width: 6.0),
+                                      Image.asset(
+                                        'assets/images/hand_emoji.png',
+                                        width: 17.0,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 1.0),
+                                  Text(
+                                    'روز خوبی داشته باشی',
+                                    style: textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 1.0),
-                              Text(
-                                'روز خوبی داشته باشی',
-                                style: textTheme.bodyMedium,
-                              ),
                             ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 15.0),
+                            decoration: BoxDecoration(
+                              color: primaryColor.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(11.0),
+                            ),
+                            child: Text(
+                              DateTime.now().toPersianDateStr(strMonth: true),
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontFamily: 'iransans',
+                                fontSize: 10.0,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 15.0),
+                    ),
+
+                    const SizedBox(height: 20.0),
+
+                    const TitleWidget(title: 'آزمون های در دسترس'),
+
+                    // categories
+                    const SizedBox(height: 20.0),
+                    CategoryBox(
+                      height: height,
+                      image: 'assets/images/riyazi.svg',
+                      title: 'ریاضی',
+                      onTap: () {
+                        homeBottomSheet(context, height, width, defualtIndex,
+                            categoryList[0]);
+                      },
+                    ),
+                    CategoryBox(
+                      height: height,
+                      image: 'assets/images/tajrobi.svg',
+                      title: 'علوم تجربی',
+                      onTap: () {
+                        homeBottomSheet(context, height, width, defualtIndex,
+                            categoryList[1]);
+                      },
+                    ),
+                    CategoryBox(
+                      height: height,
+                      image: 'assets/images/ensani.svg',
+                      title: 'علوم انسانی',
+                      onTap: () {
+                        homeBottomSheet(context, height, width, defualtIndex,
+                            categoryList[2]);
+                      },
+                    ),
+                    const SizedBox(height: 25.0),
+                  ],
+                ),
+              ),
+
+              // تبلیغ
+              BlocBuilder<VisibleCubit, bool>(
+                builder: (context, state) {
+                  if (state) {
+                    return Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: width,
+                        margin: const EdgeInsets.all(5.0),
                         decoration: BoxDecoration(
-                          color: primaryColor.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(12.0),
+                          color: cardColor,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 5.0,
+                              color: Colors.grey.shade400,
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          DateTime.now().toPersianDateStr(strMonth: true),
-                          style: TextStyle(
-                            color: primaryColor,
-                            fontFamily: 'iransans',
-                            fontSize: 10.0,
-                          ),
+                        padding: const EdgeInsets.all(5.0),
+                        child: Stack(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Image.network(
+                                        tablighIconUrl!,
+                                        width: 75.0,
+                                        height: 75.0,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Text(tablighTitle!,
+                                        style: textTheme.titleMedium),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const SizedBox(width: 5.0),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.redAccent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        TapsellPlus.instance
+                                            .nativeBannerAdClicked(
+                                                tablighResponseId!);
+                                      },
+                                      child: const Text(
+                                        'مشاهده',
+                                        style: TextStyle(fontSize: 12.0),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 35.0),
+                                  ],
+                                ),
+                              ],
+                            ),
+
+                            // close button
+                            Positioned(
+                              left: 0.0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  BlocProvider.of<VisibleCubit>(context)
+                                      .changeStateVisible(false);
+                                },
+                                child: Container(
+                                  width: 25.0,
+                                  height: 25.0,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.4),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  child: const Icon(Icons.close_rounded,
+                                      size: 20.0, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20.0),
-
-                const TitleWidget(title: 'آزمون های در دسترس'),
-
-                // categories
-                const SizedBox(height: 20.0),
-                CategoryBox(
-                  height: height,
-                  image: 'assets/images/riyazi.svg',
-                  title: 'ریاضی',
-                  onTap: () {
-                    homeBottomSheet(
-                        context, height, width, defualtIndex, categoryList[0]);
-                  },
-                ),
-                CategoryBox(
-                  height: height,
-                  image: 'assets/images/tajrobi.svg',
-                  title: 'علوم تجربی',
-                  onTap: () {
-                    homeBottomSheet(
-                        context, height, width, defualtIndex, categoryList[1]);
-                  },
-                ),
-                CategoryBox(
-                  height: height,
-                  image: 'assets/images/ensani.svg',
-                  title: 'علوم انسانی',
-                  onTap: () {
-                    homeBottomSheet(
-                        context, height, width, defualtIndex, categoryList[2]);
-                  },
-                ),
-                const SizedBox(height: 25.0),
-              ],
-            ),
+                    );
+                  }
+                  return Container();
+                },
+              ),
+            ],
           ),
         ),
         bottomNavigationBar: BottomNav(controller: pageController),
@@ -376,11 +520,17 @@ class HomeScreen extends StatelessWidget {
                           // ریاضی
                           if (categoryTitle == 'ریاضی') {
                             // lessons list
-                            QuizScreen.lossonsList = [
+                            HomeScreen.lessonsList = [
                               'ریاضیات',
                               'فیریک',
                               'شیمی',
                             ];
+
+                            if (quizYear == 1399) {
+                              QuizScreen.numberQuestions = ['50', '40', '30'];
+                            } else {
+                              QuizScreen.numberQuestions = ['40', '35', '30'];
+                            }
 
                             // if (quizType == 'داخلی') {
                             switch (quizYear) {
@@ -405,14 +555,41 @@ class HomeScreen extends StatelessWidget {
 
                           // علوم تجربی
                           if (categoryTitle == 'علوم تجربی') {
-                            // lessons list
-                            QuizScreen.lossonsList = [
-                              'زیست شناسی',
-                              'فیریک',
-                              'شیمی',
-                              'ریاضی',
-                              'زمین شناسی',
-                            ];
+                            if (quizYear == 1399) {
+                              // lessons list
+                              HomeScreen.lessonsList = [
+                                'ریاضی',
+                                'زیست شناسی',
+                                'فیریک',
+                                'شیمی',
+                                'زمین شناسی',
+                              ];
+
+                              QuizScreen.numberQuestions = [
+                                '30',
+                                '50',
+                                '30',
+                                '35',
+                                '20'
+                              ];
+                            } else {
+                              // lessons list
+                              HomeScreen.lessonsList = [
+                                'زیست شناسی',
+                                'فیریک',
+                                'شیمی',
+                                'ریاضی',
+                                'زمین شناسی',
+                              ];
+
+                              QuizScreen.numberQuestions = [
+                                '45',
+                                '30',
+                                '35',
+                                '30',
+                                '15'
+                              ];
+                            }
 
                             // if (quizType == 'داخلی') {
                             switch (quizYear) {
@@ -437,18 +614,57 @@ class HomeScreen extends StatelessWidget {
 
                           // علوم انسانی
                           if (categoryTitle == 'علوم انسانی') {
-                            // lessons list
-                            QuizScreen.lossonsList = [
-                              'ریاضی',
-                              'زبان و ادبیات فارسی',
-                              'علوم اجتماعی',
-                              'روانشناسی',
-                              'زبان عربی',
-                              'تاریخ',
-                              'جغرافیا',
-                              'فلسفه و منطق',
-                              'اقتصاد',
-                            ];
+                            if (quizYear == 1399) {
+                              // lessons list
+                              HomeScreen.lessonsList = [
+                                'ریاضی',
+                                'اقتصاد',
+                                'زبان و ادبیات فارسی',
+                                'علوم اجتماعی',
+                                'زبان عربی',
+                                'تاریخ',
+                                'جغرافیا',
+                                'فلسفه و منطق',
+                                'روانشناسی',
+                              ];
+
+                              QuizScreen.numberQuestions = [
+                                '20',
+                                '15',
+                                '30',
+                                '20',
+                                '20',
+                                '15',
+                                '15',
+                                '20',
+                                '20'
+                              ];
+                            } else {
+                              // lessons list
+                              HomeScreen.lessonsList = [
+                                'ریاضی',
+                                'زبان و ادبیات فارسی',
+                                'علوم اجتماعی',
+                                'روانشناسی',
+                                'زبان عربی',
+                                'تاریخ',
+                                'جغرافیا',
+                                'فلسفه و منطق',
+                                'اقتصاد',
+                              ];
+
+                              QuizScreen.numberQuestions = [
+                                '20',
+                                '30',
+                                '15',
+                                '15',
+                                '20',
+                                '13',
+                                '12',
+                                '20',
+                                '15'
+                              ];
+                            }
 
                             // if (quizType == 'داخلی') {
                             switch (quizYear) {

@@ -19,22 +19,28 @@ class QuizModelAdapter extends TypeAdapter<QuizModel> {
     return QuizModel(
       title: fields[0] as String?,
       date: fields[1] as String?,
+      quizPercentages: (fields[3] as List?)?.cast<dynamic>(),
+      quizLessons: (fields[2] as List?)?.cast<dynamic>(),
     )
-      ..time = fields[2] as String?
-      ..type = fields[3] as String?;
+      ..time = fields[4] as String?
+      ..type = fields[5] as String?;
   }
 
   @override
   void write(BinaryWriter writer, QuizModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
       ..write(obj.date)
       ..writeByte(2)
-      ..write(obj.time)
+      ..write(obj.quizLessons)
       ..writeByte(3)
+      ..write(obj.quizPercentages)
+      ..writeByte(4)
+      ..write(obj.time)
+      ..writeByte(5)
       ..write(obj.type);
   }
 
